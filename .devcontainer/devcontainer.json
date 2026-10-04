@@ -1,0 +1,23 @@
+{
+  "name": "pyjamacafe.code (Hugo 0.158.0 extended)",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "budparr.language-hugo-vscode",
+        "yzhang.markdown-all-in-one"
+      ]
+    }
+  },
+  "forwardPorts": [1313],
+  "portsAttributes": {
+    "1313": {
+      "label": "Hugo dev server",
+      "onAutoForward": "notify"
+    }
+  },
+  "postCreateCommand": "hugo version",
+  "remoteUser": "vscode"
+}

@@ -1,0 +1,14 @@
+{{- with site.Params.firebase }}
+{{- if and .apiKey .projectId }}
+<script>
+window.__FIREBASE_CONFIG__ = {
+  apiKey: '{{ .apiKey }}',
+  authDomain: '{{ .authDomain }}',
+  projectId: '{{ .projectId }}',
+  storageBucket: '{{ .storageBucket }}',
+  messagingSenderId: '{{ .messagingSenderId }}',
+  appId: '{{ .appId }}'
+};
+</script>
+{{- end }}
+{{- end }}

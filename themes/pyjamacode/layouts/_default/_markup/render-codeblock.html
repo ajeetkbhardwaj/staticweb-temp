@@ -1,0 +1,6 @@
+{{- $file := .Attributes.file | default "" -}}
+{{- $caption := .Attributes.caption | default "" -}}
+{{- $run := .Attributes.run | default "" -}}
+{{- $cmd := .Attributes.cmd | default "" -}}
+{{- $lang := .Type | default "" -}}
+<pre{{ if $file }} data-file="{{ $file }}"{{ end }}{{ if $caption }} data-caption="{{ $caption }}"{{ end }}{{ if $run }} data-run="1"{{ end }}{{ if $cmd }} data-cmd="{{ $cmd }}"{{ end }}><code class="language-{{ $lang }}">{{ .Inner }}</code></pre>

@@ -1,0 +1,18 @@
+{{- with resources.Get "js/auth.js" }}
+  <script src="{{ .RelPermalink }}"></script>
+{{- end }}
+{{- with resources.Get "js/main.js" }}
+  {{- $opts := dict
+    "minify" (cond hugo.IsDevelopment false true)
+    "sourceMap" (cond hugo.IsDevelopment "linked" "none")
+  }}
+  {{- with . | js.Build $opts }}
+    {{- if hugo.IsDevelopment }}
+      <script src="{{ .RelPermalink }}" defer></script>
+    {{- else }}
+      {{- with . | fingerprint }}
+        <script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" defer></script>
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}

@@ -1,0 +1,19 @@
+<footer class="statusbar">
+  <span class="statusbar-left"></span>
+  <span class="statusbar-center">&copy; {{ now.Year }} {{ site.Params.author | default site.Title }}. All Rights Reserved.</span>
+  <span class="statusbar-right">
+    <div id="syncBtnFooter" class="sync-btn-footer d-none">
+      <span id="syncIndicatorFooter" class="sync-indicator"><i class="bi bi-cloud-check"></i></span>
+      <span id="syncLabelFooter" class="sync-label">Sync to cloud</span>
+    </div>
+  </span>
+</footer>
+
+<dialog id="syncConfirmModal" class="reset-dialog">
+  <h3>Unsaved Changes</h3>
+  <div id="syncChangesList" style="margin:0 0 1rem;max-height:200px;overflow-y:auto;font-size:0.85rem;line-height:1.5"></div>
+  <form method="dialog" class="d-flex flex-row gap-2">
+    <button id="syncConfirmYes" class="btn btn-primary flex-fill">Sync Now</button>
+    <button id="syncConfirmNo" class="btn btn-outline-secondary flex-fill" value="cancel">Cancel</button>
+  </form>
+</dialog>

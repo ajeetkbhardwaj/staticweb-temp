@@ -1,0 +1,25 @@
+{{- /*
+  run_check — defines the shell command the judge runs when the student clicks
+  Check for this lesson. The command executes on the judge server with the
+  student's submitted files present in the working directory.
+
+  Usage (inline in any section, typically ===CHALLENGE===):
+
+    {{< run_check >}}
+    gcc -Wall main.c -o main && ./main
+    {{< /run_check >}}
+
+  Or as a parameter:
+
+    {{< run_check cmd="gcc main.c -o main && ./main" >}}
+
+  Multiple run_check blocks: the last one wins (client reads the first).
+
+  The command is emitted as plain text in a hidden element that the client
+  reads and forwards to the judge's /api/submit `command` field. When absent,
+  the judge falls back to its built-in compile/run flow for the lesson's
+  language.
+*/ -}}
+{{- $cmd := .Get "cmd" | default (.Get 0) -}}
+{{- if not $cmd -}}{{- $cmd = trim .Inner "\n\r" -}}{{- end -}}
+<pre data-run-check hidden>{{ $cmd }}</pre>

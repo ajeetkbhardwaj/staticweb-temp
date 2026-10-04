@@ -1,0 +1,22 @@
+{{- $title := .Title | default site.Title }}
+{{- $description := or .Params.description site.Params.description }}
+{{- $og := or .Params.og_image site.Params.og_image "og.png" }}
+{{- $image := "" }}
+{{- if .Resources.GetMatch $og }}
+  {{- $image = (.Resources.GetMatch $og).Permalink }}
+{{- else }}
+  {{- $image = $og | absURL }}
+{{- end }}
+{{- $url := .Permalink }}
+
+<meta property="og:title" content="{{ $title }}">
+<meta property="og:description" content="{{ $description }}">
+<meta property="og:image" content="{{ $image }}">
+<meta property="og:url" content="{{ $url }}">
+<meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
+<meta property="og:site_name" content="{{ site.Title }}">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ $title }}">
+<meta name="twitter:description" content="{{ $description }}">
+<meta name="twitter:image" content="{{ $image }}">

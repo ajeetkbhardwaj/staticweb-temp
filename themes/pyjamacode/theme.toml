@@ -1,0 +1,13 @@
+name = 'PyjamaCode'
+license = 'MIT'
+licenselink = 'https://github.com/yourname/pyjamacode/blob/main/LICENSE'
+description = 'A three-pane coding platform theme for embedded systems problems.'
+homepage = 'https://example.org/'
+demosite = 'https://example.org/'
+tags = ['coding-platform', 'education', 'embedded-systems', 'dark-mode', 'bootstrap']
+features = ['responsive', 'dark-mode', 'problem-posts', 'code-editor']
+min_version = '0.146.0'
+
+[author]
+  name = 'Embedded Systems Instructor'
+  homepage = 'https://example.org/'

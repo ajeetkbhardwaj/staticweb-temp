@@ -1,0 +1,222 @@
+{{ $problems := where site.RegularPages "Section" "courses" }}
+{{ $sections := slice }}{{ $courseTitleMap := dict }}{{ range site.Pages }}{{ if and (eq .Section "courses") (eq .Kind "section") .File }}{{ $sections = $sections | append . }}{{ $topic := index (split (strings.TrimSuffix "/" .File.Dir) "/") 1 }}{{ $courseTitleMap = $courseTitleMap | merge (dict $topic .Title) }}{{ end }}{{ end }}
+{{ $active := .activeProblem | default (index $problems 0) }}
+{{ $activeId := "" }}
+{{ with $active }}{{ if .File }}{{ $activeId = .File.ContentBaseName }}{{ end }}{{ end }}
+{{ $mode := .mode | default "reading" }}
+
+<script id="problem-data" type="application/json">
+{{ $data := slice }}
+{{ range $sections }}
+  {{ $topic := index (split (strings.TrimSuffix "/" .File.Dir) "/") 1 }}
+  {{ $item := dict
+    "id" (printf "intro-%s" $topic)
+    "title" "Course Details"
+    "difficulty" "easy"
+    "language" "c"
+    "permalink" .RelPermalink
+    "content" (.RawContent | .RenderString)
+    "article" ""
+    "codes" ""
+    "quiz" ""
+    "quiz_segments" (slice)
+    "quiz2" ""
+    "reading" ""
+    "has_challenge" false
+    "test_cases" ""
+    "topic" $topic
+    "subtopic" ""
+    "topic_weight" -100
+    "subtopic_weight" 99
+    "weight" 0
+    "isIntro" true
+    "topic_title" .Title
+  }}
+  {{ $data = $data | append $item }}
+{{ end }}
+{{ range $problems }}
+  {{ $parts := split (strings.TrimSuffix "/" .File.Dir) "/" }}
+  {{ $topic := index $parts 1 }}
+  {{ $subtopic := index $parts 2 }}
+  {{ $raw := .RawContent }}
+  {{ $sections := partial "parse-sections.html" (dict "raw" $raw) }}
+  {{ $challengeMarkdown := $sections.challenge }}
+  {{ $explanationMarkdown := $sections.explanation }}
+  {{ $codesMarkdown := $sections.codes }}
+  {{ $quizMarkdown := $sections.quiz }}
+  {{ $readingMarkdown := $sections.reading }}
+  {{/* The reading layout has no editor: ignore any ===CODE=== section. */}}
+  {{ if eq $mode "reading" }}{{ $codesMarkdown = "" }}{{ end }}
+  {{ $item := dict
+    "id" .File.ContentBaseName
+    "title" .Title
+    "difficulty" .Params.difficulty
+    "language" .Params.language
+    "permalink" .RelPermalink
+    "content" ($challengeMarkdown | .RenderString)
+    "article" ($explanationMarkdown | .RenderString)
+    "codes" ($codesMarkdown | .RenderString)
+    "quiz" $quizMarkdown
+    "quiz_segments" (partial "parse-quiz.html" (dict "raw" $quizMarkdown "page" .))
+    "quiz2" .RawContent
+    "reading" ($readingMarkdown | .RenderString)
+    "has_challenge" $sections.has_challenge
+    "free_runs" (.Params.freeRuns | default false)
+    "code_layout" (eq .Params.layout "code")
+    "test_cases" .Params.test_cases
+    "topic" $topic
+    "subtopic" $subtopic
+    "topic_weight" (cond (isset .Params "topic_weight") (.Params.topic_weight | int) 99)
+    "subtopic_weight" (cond (isset .Params "subtopic_weight") (.Params.subtopic_weight | int) 99)
+    "topic_title" (index $courseTitleMap $topic)
+    "weight" (cond (isset .Params "weight") (.Params.weight | int) 99)
+  }}
+  {{ $data = $data | append $item }}
+{{ end }}
+{{ $data | jsonify | safeJS }}
+</script>
+<script id="course-groups" type="application/json">{{ site.Data.course_groups | jsonify | safeJS }}</script>
+<input type="hidden" id="active-problem-id" value="{{ $activeId }}">
+
+<div class="platform-layout" id="platformLayout">
+  <!-- Sidebar: Cases -->
+  <aside class="platform-pane sidebar-pane" id="sidebarPane">
+    <div class="pane-header border-bottom d-flex align-items-center gap-2" style="min-height:36px">
+      <input type="text" id="questionSearch" class="form-control form-control-sm" placeholder="Search..." style="flex:1" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-1p-ignore data-lpignore="true" data-form-type="other">
+      <button id="sidebarCloseBtn" class="sidebar-close btn btn-sm py-0 btn-link text-decoration-none d-none" style="font-size:1.1rem;color:var(--bs-body-color);flex-shrink:0;padding:0 0.15rem"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="sidebar-tabs">
+      <div class="sidebar-tab active" id="tabLessons"><i class="bi bi-easel2-fill"></i> Courses</div>
+      <div class="sidebar-tab" id="tabBookmarks"><i class="bi bi-bookmarks-fill"></i> Bookmarks</div>
+    </div>
+    <div class="pane-body overflow-auto">
+      <div class="tree-container" id="questionList"></div>
+      <div id="bookmarksList" class="d-none"></div>
+    </div>
+  </aside>
+
+  <div class="pane-resizer" id="resizerCasesCase" aria-label="Resize cases pane"></div>
+
+  <!-- Middle: Case Details -->
+  <aside class="platform-pane question-pane" id="questionPane">
+    <div class="pane-header border-bottom d-flex align-items-center" style="justify-content:space-between">
+      <span class="d-flex gap-1" style="flex-shrink:0">
+        <button id="sidebarShowBtn" class="btn btn-sm py-0 btn-link text-decoration-none d-none" data-bs-toggle="tooltip" title="Show sidebar" style="color:var(--bs-body-color);padding:0 0.15rem"><i class="bi bi-layout-sidebar"></i></button>
+        <button id="sidebarHideBtn" class="btn btn-sm py-0 btn-link text-decoration-none" data-bs-toggle="tooltip" title="Collapse sidebar" style="color:var(--bs-body-color);padding:0 0.15rem"><i class="bi bi-arrow-bar-left"></i></button>
+        <button id="bookmarkBtn" class="btn btn-sm py-0 btn-link text-decoration-none d-none" data-bs-toggle="tooltip" title="Bookmark this problem" style="color:var(--bs-secondary-color);padding:0 0.15rem"><i class="bi bi-bookmark"></i></button>
+      </span>
+      <span id="caseTitle" class="small fw-semibold" style="flex:1;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Select a Case</span>
+      <span class="d-flex gap-1" style="flex-shrink:0">
+        <button id="prevProblemBtn" class="btn btn-sm py-0 btn-link text-decoration-none" data-bs-toggle="tooltip" title="Previous problem" style="color:var(--bs-secondary-color);padding:0 0.15rem"><i class="bi bi-chevron-left"></i></button>
+        <button id="nextProblemBtn" class="btn btn-sm py-0 btn-link text-decoration-none" data-bs-toggle="tooltip" title="Next problem" style="color:var(--bs-secondary-color);padding:0 0.15rem"><i class="bi bi-chevron-right"></i></button>
+        {{ if ne $mode "reading" }}
+        <button id="editorShowBtn" class="btn btn-sm py-0 btn-link text-decoration-none" title="Show editor" style="color:var(--bs-body-color);padding:0 0.15rem"><i class="bi bi-terminal-fill"></i></button>
+        <button id="editorCloseBtn" class="btn btn-sm py-0 btn-link text-decoration-none d-none" title="Close editor" style="color:var(--bs-body-color);padding:0 0.15rem"><i class="bi bi-terminal-fill"></i></button>
+        {{ end }}
+      </span>
+    </div>
+    <div class="center-tabs" id="centerTabs">
+      <div class="center-tab d-none" id="tabArticle">Lecture</div>
+      <div class="center-tab d-none {{ if eq $mode "reading" }}reading-merged{{ end }}" id="tabReading">Reading</div>
+      <div class="center-tab d-none" id="tabQuiz">Quiz</div>
+      <div class="center-tab active" id="tabChallenge">Challenge</div>
+    </div>
+    <div class="question-pane-body" id="questionPaneBody">
+      <div id="questionContentWrapper">
+        <div class="pane-body question-content overflow-auto p-3" id="questionContent">
+          <p class="text-muted">Select a case from the left sidebar to begin.</p>
+        </div>
+        <div style="position:relative;flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column">
+          <div class="pane-body question-content article-content overflow-auto p-3 d-none" id="articleContent"></div>
+          <div class="pane-body question-content reading-content overflow-auto p-3 d-none {{ if eq $mode "reading" }}reading-merged{{ end }}" id="readingTabContent"></div>
+          <div class="pane-body question-content quiz-content overflow-auto p-3 d-none" id="quizContent"></div>
+        </div>
+      </div>
+
+      <div class="notes-resizer" id="resizerQuestionNotes" aria-label="Resize notes"></div>
+
+      <div class="notes-area notes-hidden" id="notesArea">
+        <div class="notes-header border-bottom d-flex align-items-center">
+          <span class="d-flex align-items-center" style="flex-shrink:0">
+            <button id="notesMinimizeBtn" class="btn btn-sm btn-outline-secondary notes-minmax-btn" data-bs-toggle="tooltip" title="Minimize notes"><span class="notes-minmax-icon">-</span></button>
+            <button id="notesMaximizeBtn" class="btn btn-sm btn-outline-secondary notes-minmax-btn" data-bs-toggle="tooltip" title="Maximize notes"><span class="notes-minmax-icon">+</span></button>
+            <button id="notesRestoreBtn" class="btn btn-sm btn-outline-secondary d-none" data-bs-toggle="tooltip" title="Restore notes"><i class="bi bi-fullscreen-exit"></i></button>
+          </span>
+          <span class="fw-semibold small" style="flex:1;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Notes <i id="notesUnsavedDot" class="bi bi-dot" style="font-size:1em;vertical-align:middle"></i></span>
+          <div class="d-flex align-items-center" style="flex-shrink:0">
+            <button id="notesModeBtn" class="btn btn-sm btn-outline-secondary" data-bs-toggle="tooltip" title="Edit notes"><i class="bi bi-pencil-square"></i></button>
+            <div class="dropdown">
+              <button id="exportMenuBtn" class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown" aria-expanded="false" data-bs-toggle="tooltip" title="Export notes"><i class="bi bi-download"></i></button>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="#" id="exportNotesMenuItem"><i class="bi bi-file-earmark-text"></i> Markdown (.md)</a></li>
+                <li><a class="dropdown-item" href="#" id="exportPdfMenuItem"><i class="bi bi-file-earmark-pdf"></i> PDF</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="notes-body" id="notesBody">
+          <div id="notesEditorWrapper" class="notes-editor-wrapper"></div>
+          <textarea id="notesEditor" class="notes-editor w-100 h-100 p-3" spellcheck="false" placeholder="Type your notes here" autocomplete="off" data-1p-ignore></textarea>
+          <div id="notesPreview" class="notes-preview question-content overflow-auto p-3 d-none"></div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="pane-resizer" id="resizerCaseWorkspace" aria-label="Resize case pane"></div>
+
+  {{ if eq $mode "reading" }}
+  <!-- Right: Reading pane (no editor) -->
+  <section class="platform-pane editor-pane reading-pane" id="readingPane">
+    <div class="pane-body question-content reading-content overflow-auto p-3" id="readingContent">
+      <p class="text-muted">No reading material for this chapter.</p>
+    </div>
+  </section>
+  {{ else }}
+  <!-- Right: Coding Workspace -->
+  <section class="platform-pane editor-pane" id="editorPane">
+    <div class="pane-header border-bottom d-flex align-items-center gap-2">
+      <span id="statusText" class="small" style="flex:1;text-align:left"></span>
+      <div class="d-flex gap-2 align-items-center">
+        <button id="submitBtn" class="btn btn-sm btn-outline-secondary" data-bs-toggle="tooltip" title="Check solution"><i class="bi bi-check-lg"></i> Check</button>
+        <button id="resetBtn" class="btn btn-sm btn-outline-secondary" data-bs-toggle="tooltip" title="Reset active file to starter"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
+        <button id="resetAllBtn" class="btn btn-sm btn-outline-secondary d-none" data-bs-toggle="tooltip" title="Reset all files to starter"><i class="bi bi-arrow-counterclockwise"></i> Reset All</button>
+      </div>
+    </div>
+
+    <div class="file-tabs" id="fileTabs"></div>
+    <div class="editor-area" id="editorArea">
+      <div id="codeEditorWrapper" class="code-editor-wrapper"></div>
+      <textarea id="codeEditor" class="code-editor w-100 h-100 p-3" spellcheck="false" autocomplete="off" data-1p-ignore></textarea>
+    </div>
+
+    <div class="console-resizer" id="resizerEditorConsole" aria-label="Resize console"></div>
+
+    <div class="console-area" id="consoleArea">
+      <div class="console-header border-bottom d-flex justify-content-between align-items-center">
+        <span class="fw-semibold small">Output</span>
+        <button id="clearConsole" class="btn btn-link btn-sm p-0 text-decoration-none" style="color:var(--bs-secondary-color)"><i class="bi bi-eraser"></i></button>
+      </div>
+      <div class="terminal-body d-flex flex-column">
+        <pre id="consoleOutput" class="console-output m-0 p-3">When ready, hit Check to compile and run the code.</pre>
+      </div>
+    </div>
+  </section>
+  {{ end }}
+</div>
+
+<!-- Image zoom modal -->
+<div id="imageZoomOverlay" class="img-zoom-overlay" style="display:none" onclick="document.getElementById('imageZoomOverlay').style.display='none'">
+  <span class="img-zoom-close" onclick="document.getElementById('imageZoomOverlay').style.display='none'">&times;</span>
+  <img id="imageZoomImg" class="img-zoom-img" src="" alt="">
+</div>
+
+<!-- Floating notes widget (shown when the notes window is minimized) -->
+<button id="notesWidget" class="notes-widget" type="button" title="Open notes"><i class="bi bi-sticky-fill"></i> <span class="notes-widget-label">Notes</span></button>
+
+<!-- Guest notes prompt: nudges signed-out users to save their notes online -->
+<div id="notesAuthPrompt" class="notes-auth-prompt" role="status" aria-live="polite">
+  <button id="notesAuthPromptClose" class="notes-auth-prompt-close" aria-label="Close">&times;</button>
+  <p class="notes-auth-prompt-text">Sign in to save your notes online for free. Local notes won't be syned across sessions.</p>
+  <button id="notesAuthPromptSignin" class="btn btn-sm btn-primary">Sign in</button>
+</div>

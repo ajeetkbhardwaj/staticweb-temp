@@ -1,0 +1,89 @@
+{{- /*
+  Splits a raw quiz section into renderable segments for rich quiz pages:
+
+    - prose segments: markdown outside <!--question-->…<!--/question--> blocks
+      (rendered as-is, so images/videos/code/etc. all work)
+    - question segments: {t:"question", title, body, options, correct,
+      explanation} with title, body, option text and explanation rendered via
+      .RenderString
+
+  Question block syntax:
+
+    <!--question-->
+    ## Question title (markdown)
+    Any markdown body (images, videos, prose, ...)
+    - [ ] Option A
+    - [x] Option B
+    Correct: B
+    Explanation:
+    Any markdown explanation (multiple lines).
+    <!--/question-->
+
+  When no question tags are present, returns an empty slice and the client
+  falls back to the legacy line parser on the raw quiz markdown.
+*/ -}}
+{{- $raw := .raw -}}
+{{- $page := .page -}}
+{{- $segments := slice -}}
+{{- $open := "<!--question-->" -}}
+{{- $close := "<!--/question-->" -}}
+{{- $norm := $raw -}}
+{{- $norm = replaceRE `<!--\s*question\s*-->` $open $norm -}}
+{{- $norm = replaceRE `<!--\s*/\s*question\s*-->` $close $norm -}}
+{{- $oc := strings.Count $open $norm -}}
+{{- $cc := strings.Count $close $norm -}}
+{{- if or (gt $oc 0) (gt $cc 0) -}}
+  {{- if ne $oc $cc }}{{ errorf "quiz: found %d opening and %d closing question tag(s); both are required" $oc $cc }}{{ end -}}
+  {{- $letters := "ABCDEFGH" -}}
+  {{- $parts := split $norm $open -}}
+  {{- range $i, $p := $parts -}}
+    {{- if eq $i 0 -}}
+      {{- $prose := strings.TrimSpace $p -}}
+      {{- if $prose }}{{ $segments = $segments | append (dict "t" "prose" "h" ($page.RenderString $prose)) }}{{ end -}}
+    {{- else -}}
+      {{- $qpair := split $p $close -}}
+      {{- $qInner := index $qpair 0 -}}
+      {{- $title := "" -}}
+      {{- $bodyLines := slice -}}
+      {{- $opts := slice -}}
+      {{- $correct := -1 -}}
+      {{- $explLines := slice -}}
+      {{- $inExpl := false -}}
+      {{- $optIdx := 0 -}}
+      {{- range split $qInner "\n" -}}
+        {{- $line := strings.TrimSpace . -}}
+        {{- if not $inExpl -}}
+          {{- if and (strings.HasPrefix $line "## ") (not $title) -}}
+            {{- $title = strings.TrimPrefix "## " $line -}}
+          {{- else if strings.HasPrefix $line "- [" -}}
+            {{- $marker := "" -}}
+            {{- if ge (len $line) 4 }}{{ $marker = slicestr $line 3 4 }}{{ end -}}
+            {{- $text := "" -}}
+            {{- if ge (len $line) 6 }}{{ $text = slicestr $line 6 }}{{ end -}}
+            {{- $opts = $opts | append (dict "letter" (substr $letters $optIdx 1) "html" ($page.RenderString $text)) -}}
+            {{- if eq (upper $marker) "X" }}{{ $correct = $optIdx }}{{ end -}}
+            {{- $optIdx = add $optIdx 1 -}}
+          {{- else if strings.HasPrefix $line "Correct:" -}}
+            {{- $letter := upper (strings.TrimSpace (strings.TrimPrefix "Correct:" $line)) -}}
+            {{- $letterMap := dict "A" 0 "B" 1 "C" 2 "D" 3 "E" 4 "F" 5 "G" 6 "H" 7 -}}
+            {{- if isset $letterMap $letter }}{{ $correct = index $letterMap $letter }}{{ end -}}
+          {{- else if strings.HasPrefix $line "Explanation:" -}}
+            {{- $inExpl = true -}}
+            {{- $first := strings.TrimSpace (strings.TrimPrefix "Explanation:" $line) -}}
+            {{- if $first }}{{ $explLines = $explLines | append $first }}{{ end -}}
+          {{- else -}}
+            {{- $bodyLines = $bodyLines | append . -}}
+          {{- end -}}
+        {{- else -}}
+          {{- $explLines = $explLines | append . -}}
+        {{- end -}}
+      {{- end -}}
+      {{- $segments = $segments | append (dict "t" "question" "title" ($page.RenderString $title) "body" ($page.RenderString (delimit $bodyLines "\n")) "options" $opts "correct" $correct "explanation" ($page.RenderString (delimit $explLines "\n"))) -}}
+      {{- if gt (len $qpair) 1 -}}
+        {{- $trailing := strings.TrimSpace (index $qpair 1) -}}
+        {{- if $trailing }}{{ $segments = $segments | append (dict "t" "prose" "h" ($page.RenderString $trailing)) }}{{ end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- return $segments -}}

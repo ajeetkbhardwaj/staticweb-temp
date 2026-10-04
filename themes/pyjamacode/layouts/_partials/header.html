@@ -1,0 +1,45 @@
+<nav class="navbar navbar-expand border-bottom px-3 py-2">
+  <div class="container-fluid d-flex justify-content-between">
+    <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ "/" | relURL }}" id="homeLink">
+      <img src="{{ "pc.png" | relURL }}" alt="Logo" height="28" class="me-2">
+      <span id="typedTitle">{{ site.Title }}</span>
+    </a>
+    <div class="d-flex gap-2 align-items-center">
+      <button id="authLoginBtn" class="btn btn-sm btn-outline-primary d-none" data-bs-toggle="tooltip" title="Sign in"><i class="bi bi-person"></i> <span class="d-none d-sm-inline"> Sign in</span></button>
+      <div id="authUserMenu" class="dropdown d-none">
+        <button class="btn btn-sm btn-outline-secondary d-flex align-items-center" data-bs-toggle="dropdown" aria-expanded="false" id="authAvatarBtn" style="padding:2px 0.5rem;border:none;background:none;position:relative">
+          <span id="authAvatar" class="auth-avatar"></span>
+          <span id="syncDot" class="sync-dot"></span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="authAvatarBtn">
+          <li><span class="dropdown-item-text small text-muted" id="authUserName" style="cursor:default"></span></li>
+          <li><span class="dropdown-item-text small text-muted" id="authUserEmail" style="cursor:default"></span></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="{{ "dashboard/" | relURL }}">Dashboard</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><div id="syncBtn" class="sync-dropdown-item d-none">
+            <span id="syncIndicator" class="sync-indicator"><i class="bi bi-cloud-check"></i></span>
+            <span id="syncLabel" class="sync-label">Sync to cloud</span>
+          </div></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item text-danger" href="#" id="resetProfileLink">Reset Profile</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="#" id="authLogoutLink">Sign out</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Reset confirmation modal -->
+<dialog id="resetConfirmModal" class="reset-dialog">
+  <h3>Reset Profile</h3>
+  <p>This will delete all your saved data (submissions, notes, preferences) from both local storage and the cloud. This cannot be undone.</p>
+  <p class="text-danger fw-semibold">To confirm, type the number below:</p>
+  <div id="resetConfirmCode" class="reset-code-display mb-2">000000</div>
+  <input id="resetConfirmInput" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" class="form-control mb-3 text-center" placeholder="Enter the number above" autocomplete="off">
+  <form method="dialog" class="d-flex flex-column gap-2">
+    <button id="resetConfirmYes" class="btn btn-danger w-100" disabled>Yes, Reset Everything</button>
+    <button id="resetConfirmNo" class="btn btn-outline-secondary w-100" value="cancel">Cancel</button>
+  </form>
+</dialog>

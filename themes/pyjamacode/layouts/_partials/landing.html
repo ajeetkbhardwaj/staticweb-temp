@@ -1,0 +1,347 @@
+{{ $problems := where site.RegularPages "Section" "courses" }}
+{{ $sections := slice }}{{ $courseTitleMap := dict }}{{ range site.Pages }}{{ if and (eq .Section "courses") (eq .Kind "section") .File }}{{ $sections = $sections | append . }}{{ $topic := index (split (strings.TrimSuffix "/" .File.Dir) "/") 1 }}{{ $courseTitleMap = $courseTitleMap | merge (dict $topic .Title) }}{{ end }}{{ end }}
+{{ $active := index $problems 0 }}
+{{ $activeId := "" }}
+{{ with $active }}{{ $activeId = .File.ContentBaseName }}{{ end }}
+
+<script id="problem-data" type="application/json">
+{{ $data := slice }}
+{{ range $sections }}
+  {{ $topic := index (split (strings.TrimSuffix "/" .File.Dir) "/") 1 }}
+  {{ $item := dict
+    "id" (printf "intro-%s" $topic)
+    "title" "Course Details"
+    "difficulty" "easy"
+    "language" "c"
+    "permalink" .RelPermalink
+    "content" ""
+    "article" ""
+    "codes" ""
+    "quiz" ""
+    "test_cases" ""
+    "topic" $topic
+    "subtopic" ""
+    "topic_weight" -100
+    "subtopic_weight" 99
+    "weight" 0
+    "isIntro" true
+    "topic_title" .Title
+  }}
+  {{ $data = $data | append $item }}
+{{ end }}
+{{ range $problems }}
+  {{ $parts := split (strings.TrimSuffix "/" .File.Dir) "/" }}
+  {{ $topic := index $parts 1 }}
+  {{ $subtopic := index $parts 2 }}
+  {{ $raw := .RawContent }}
+  {{ $sections := partial "parse-sections.html" (dict "raw" $raw) }}
+  {{ $quizMarkdown := $sections.quiz }}
+  {{ $item := dict
+    "id" .File.ContentBaseName
+    "title" .Title
+    "difficulty" .Params.difficulty
+    "language" .Params.language
+    "permalink" .RelPermalink
+    "content" ""
+    "article" ""
+    "codes" ""
+    "quiz" $quizMarkdown
+    "test_cases" .Params.test_cases
+    "topic" $topic
+    "subtopic" $subtopic
+    "topic_weight" (cond (isset .Params "topic_weight") (.Params.topic_weight | int) 99)
+    "subtopic_weight" (cond (isset .Params "subtopic_weight") (.Params.subtopic_weight | int) 99)
+    "topic_title" (index $courseTitleMap $topic)
+    "weight" (cond (isset .Params "weight") (.Params.weight | int) 99)
+  }}
+  {{ $data = $data | append $item }}
+{{ end }}
+{{ $data | jsonify | safeJS }}
+</script>
+<script id="course-groups" type="application/json">{{ site.Data.course_groups | jsonify | safeJS }}</script>
+<input type="hidden" id="active-problem-id" value="{{ $activeId }}">
+
+<div class="platform-layout" id="platformLayout">
+  <!-- Sidebar: Cases -->
+  <aside class="platform-pane sidebar-pane" id="sidebarPane">
+    <div class="pane-header border-bottom d-flex align-items-center gap-2" style="min-height:36px">
+      <input type="text" id="questionSearch" class="form-control form-control-sm" placeholder="Search..." style="flex:1" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-1p-ignore data-lpignore="true" data-form-type="other">
+      <button id="sidebarCloseBtn" class="sidebar-close btn btn-sm py-0 btn-link text-decoration-none d-none" style="font-size:1.1rem;color:var(--bs-body-color);flex-shrink:0;padding:0 0.15rem"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="sidebar-tabs">
+      <div class="sidebar-tab active" id="tabLessons"><i class="bi bi-easel2-fill"></i> Courses</div>
+      <div class="sidebar-tab" id="tabBookmarks"><i class="bi bi-bookmarks-fill"></i> Bookmarks</div>
+    </div>
+    <div class="pane-body overflow-auto">
+      <div class="tree-container" id="questionList"></div>
+      <div id="bookmarksList" class="d-none"></div>
+    </div>
+  </aside>
+
+  <div class="pane-resizer" id="resizerCasesCase" aria-label="Resize cases pane"></div>
+
+  <!-- Center: Landing -->
+  <aside class="platform-pane question-pane" id="questionPane" style="overflow:visible">
+    <div id="scanlineBg" style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:0;pointer-events:none;overflow:hidden"></div>
+    <div class="landing-content" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:transparent;overflow:hidden;padding:2rem;position:relative;z-index:1;pointer-events:none">
+      <h1 style="font-size:2.5rem;font-weight:700;margin:0;color:var(--bs-body-color);text-align:center;max-width:720px;line-height:1.2">Mastering Embedded Systems!</h1>
+      <p style="margin-top:0.5rem;font-size:1rem;font-weight:500;color:var(--bs-secondary-color);text-align:center;max-width:540px">Be the one who can reason about the machine in the age of AI.</p>
+
+      <button id="landingStartBtn" class="btn btn-primary crt-green" style="font-size:1rem;padding:0.5rem 2rem;margin-top:0.5rem;pointer-events:auto">
+        <i class="bi bi-play-fill"></i> Start the first course
+      </button>
+      <p style="margin-top:0.5rem;font-size:0.8rem;color:var(--bs-secondary-color)">Public Beta Version</p>
+    </div>
+  </aside>
+</div>
+
+<script>
+(function() {
+  var container = document.getElementById('scanlineBg');
+  if (!container) return;
+
+  // Respect users who prefer reduced motion: show the static CRT texture only.
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var W, H, ctx, canvas, animId;
+  var progress = 0;
+  var last = 0;
+
+  var SWEEP_MS = 7000;      // time for one top-to-bottom sweep
+  var TRAIL_H = 120;        // soft glow trailing above the beam
+  var LEAD_H = 26;          // short glow leading below the beam
+  var BEAM_H = 2;           // half-thickness of the bright core line
+
+  var ACCENT = '34,204,34';  // CRT phosphor green (matches --crt-green)
+
+  // Binary glyphs: mildly glowing 0s and 1s scattered behind the beam.
+  var glyphSprites = null;
+  var glyphs = [];
+
+  function buildGlyphSprites() {
+    var out = [];
+    ['0', '1'].forEach(function(ch) {
+      var s = 40;
+      var c = document.createElement('canvas');
+      c.width = s;
+      c.height = s;
+      var g = c.getContext('2d');
+      g.font = '700 20px "JetBrains Mono", monospace';
+      g.textAlign = 'center';
+      g.textBaseline = 'middle';
+      g.shadowColor = 'rgba(51,255,51,0.85)';
+      g.shadowBlur = 9;
+      g.fillStyle = 'rgba(120,235,120,0.9)';
+      g.fillText(ch, s / 2, s / 2);
+      g.shadowBlur = 0;
+      g.fillStyle = 'rgba(190,255,190,0.95)';
+      g.fillText(ch, s / 2, s / 2);
+      out.push(c);
+    });
+    return out;
+  }
+
+  function seedGlyphs() {
+    if (!glyphSprites) glyphSprites = buildGlyphSprites();
+    glyphs = [];
+    var count = Math.max(40, Math.floor(W * H / 9000));
+    for (var i = 0; i < count; i++) {
+      glyphs.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        s: Math.floor(Math.random() * glyphSprites.length),
+        a: 0.10 + Math.random() * 0.22,          // base alpha (kept mild)
+        p: Math.random() * Math.PI * 2,          // twinkle phase
+        f: 0.0006 + Math.random() * 0.0016       // twinkle speed (rad/ms)
+      });
+    }
+  }
+
+  // Static CRT texture (thin horizontal scanlines), painted once behind the beam.
+  container.style.backgroundImage =
+    'repeating-linear-gradient(to bottom,' +
+    'rgba(' + ACCENT + ',0.04) 0px, rgba(' + ACCENT + ',0.04) 1px,' +
+    'transparent 1px, transparent 3px)';
+
+  // A duplicate of the landing text, clipped to a moving horizontal band and
+  // nudged sideways, so the copy reads as a refractive distortion right where
+  // the beam passes.
+  var content = document.querySelector('.landing-content');
+  var layer = null;
+  var geom = null;          // cached content rect (viewport coords)
+  var BAND_H = 7;           // half-height of the distorted slice
+
+  function buildLayer() {
+    if (!content || reduceMotion) return;
+    layer = content.cloneNode(true);
+    layer.removeAttribute('id');
+    var ids = layer.querySelectorAll('[id]');
+    for (var i = 0; i < ids.length; i++) ids[i].removeAttribute('id');
+    layer.setAttribute('aria-hidden', 'true');
+    if ('inert' in layer) layer.inert = true;
+    var s = layer.style;
+    s.position = 'fixed';
+    s.margin = '0';
+    s.zIndex = '5';
+    s.pointerEvents = 'none';
+    s.background = 'transparent';
+    s.filter = 'blur(0.4px) brightness(1.12)';
+    s.willChange = 'transform, clip-path';
+    s.clipPath = 'inset(100% 0px 0px 0px)';   // hidden until the beam arrives
+    document.body.appendChild(layer);
+    measure(true);
+  }
+
+  function measure(force) {
+    if (!content) return;
+    var r = content.getBoundingClientRect();
+    if (!force && geom && geom.left === r.left && geom.top === r.top &&
+        geom.width === r.width && geom.height === r.height) return;
+    geom = { top: r.top, left: r.left, width: r.width, height: r.height };
+    if (layer) {
+      var s = layer.style;
+      s.left = geom.left + 'px';
+      s.top = geom.top + 'px';
+      s.width = geom.width + 'px';
+      s.height = geom.height + 'px';
+    }
+  }
+
+  function drawDistortion(beamViewportY, now) {
+    if (!layer || !content) return;
+    measure(false);
+    var rel = beamViewportY - geom.top;
+    var h = geom.height;
+    var top = Math.max(0, Math.min(h, rel - BAND_H));
+    var bottom = Math.max(0, Math.min(h, h - (rel + BAND_H)));
+    var s = layer.style;
+    s.clipPath = 'inset(' + top.toFixed(1) + 'px 0px ' + bottom.toFixed(1) + 'px 0px)';
+    var shift = Math.sin(rel * 0.25) * 3 + Math.sin(now * 0.03) * 1.2;
+    s.transform = 'translateX(' + shift.toFixed(2) + 'px)';
+  }
+
+  function init() {
+    syncExtents();
+    W = container.clientWidth;
+    H = container.clientHeight;
+    if (W < 10 || H < 10) { setTimeout(init, 200); return; }
+
+    canvas = document.createElement('canvas');
+    canvas.width = W;
+    canvas.height = H;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    container.appendChild(canvas);
+    ctx = canvas.getContext('2d');
+
+    buildLayer();
+    seedGlyphs();
+
+    if (reduceMotion) { drawFrame(H * 0.3, 0); return; }
+    animId = requestAnimationFrame(animate);
+  }
+
+  function resize() {
+    var rect = container.getBoundingClientRect();
+    if (rect.width === W && rect.height === H) return;
+    if (rect.width < 10 || rect.height < 10) return;
+    W = rect.width;
+    H = rect.height;
+    canvas.width = W;
+    canvas.height = H;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    seedGlyphs();
+  }
+
+  // The canvas and the landing content stay horizontally inside the center
+  // pane, but span the full viewport height (over the header and statusbar).
+  // The content box is extended so its flex centering lands on the viewport
+  // midline.
+  function syncExtents() {
+    var pane = container.parentElement;
+    if (!pane) return;
+    var r = pane.getBoundingClientRect();
+    var top = -r.top;
+    var bottom = -Math.max(0, window.innerHeight - r.bottom);
+    container.style.top = top + 'px';
+    container.style.bottom = bottom + 'px';
+    if (content) {
+      content.style.marginTop = top + 'px';
+      content.style.marginBottom = bottom + 'px';
+    }
+  }
+
+  function drawFrame(y, t) {
+    ctx.clearRect(0, 0, W, H);
+
+    // Mildly glowing binary glyphs (background layer)
+    if (glyphSprites && glyphs.length) {
+      for (var gi = 0; gi < glyphs.length; gi++) {
+        var gl = glyphs[gi];
+        var a = gl.a * (0.75 + 0.25 * Math.sin(t * gl.f + gl.p));
+        ctx.globalAlpha = a;
+        ctx.drawImage(glyphSprites[gl.s], gl.x - 20, gl.y - 20);
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    // Trailing glow above the beam.
+    var trail = ctx.createLinearGradient(0, y - TRAIL_H, 0, y);
+    trail.addColorStop(0, 'rgba(' + ACCENT + ',0)');
+    trail.addColorStop(0.75, 'rgba(' + ACCENT + ',0.05)');
+    trail.addColorStop(1, 'rgba(' + ACCENT + ',0.14)');
+    ctx.fillStyle = trail;
+    ctx.fillRect(0, y - TRAIL_H, W, TRAIL_H);
+
+    // Short leading glow below the beam.
+    var lead = ctx.createLinearGradient(0, y, 0, y + LEAD_H);
+    lead.addColorStop(0, 'rgba(' + ACCENT + ',0.10)');
+    lead.addColorStop(1, 'rgba(' + ACCENT + ',0)');
+    ctx.fillStyle = lead;
+    ctx.fillRect(0, y, W, LEAD_H);
+
+    // Bright core beam.
+    var beam = ctx.createLinearGradient(0, y - BEAM_H, 0, y + BEAM_H);
+    beam.addColorStop(0, 'rgba(' + ACCENT + ',0)');
+    beam.addColorStop(0.5, 'rgba(190,240,190,0.75)');
+    beam.addColorStop(1, 'rgba(' + ACCENT + ',0)');
+    ctx.fillStyle = beam;
+    ctx.fillRect(0, y - BEAM_H, W, BEAM_H * 2);
+  }
+
+  function animate(now) {
+    animId = requestAnimationFrame(animate);
+    if (!last) last = now;
+    var dt = now - last;
+    last = now;
+    if (dt > 100) dt = 100;   // clamp after tab switches
+
+    syncExtents();
+    resize();
+
+    progress += dt / SWEEP_MS;
+    if (progress >= 1) progress -= 1;
+
+    // Slight flicker so the beam feels alive.
+    ctx.globalAlpha = 0.9 + 0.1 * Math.sin(now * 0.02);
+    drawFrame(progress * H, now);
+    ctx.globalAlpha = 1;
+
+    var beamY = container.getBoundingClientRect().top + progress * H;
+    drawDistortion(beamY, now);
+  }
+
+  window.addEventListener('resize', function() {
+    clearTimeout(window._slr);
+    window._slr = setTimeout(function() {
+      syncExtents();
+      if (canvas) resize();
+      measure(true);
+    }, 200);
+  });
+
+  if (container.clientWidth > 10) init();
+  else setTimeout(init, 300);
+})();
+</script>

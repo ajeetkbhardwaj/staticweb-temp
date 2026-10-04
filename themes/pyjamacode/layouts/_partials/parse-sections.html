@@ -1,0 +1,127 @@
+{{- /*
+  Splits a lesson's raw markdown body into its logical sections.
+
+  Two syntaxes are supported. Do not mix them within a single file.
+
+  Tag syntax (preferred):
+    <!--challenge-->   ... <!--/challenge-->
+    <!--explanation--> ... <!--/explanation-->
+    <!--reading-->     ... <!--/reading-->
+    <!--code-->        ... <!--/code-->
+    <!--quiz-->        ... <!--/quiz-->
+
+    - Opening and closing tags are both required; a lone/unpaired tag is an error.
+    - Whitespace inside a tag is allowed: <!-- challenge -->, <!-- /challenge -->.
+    - A tag is always treated as a delimiter. To use the literal text, escape it
+      with a backslash, e.g. \<!--challenge--> renders as <!--challenge-->.
+
+  Marker syntax (legacy):
+    ===CHALLENGE=== ===EXPLANATION=== ===READING=== ===CODE=== ===QUIZ===
+    Each section runs from its marker up to whichever other marker appears next,
+    so a marker may be placed anywhere in the file.
+
+  Output keys: challenge, explanation, codes, quiz, reading, has_challenge.
+
+  Usage: {{ $s := partial "parse-sections.html" (dict "raw" .RawContent) }}
+*/ -}}
+{{- $raw := .raw -}}
+{{- $esc := "\uE000" -}}
+{{- /* Escape sequence: a backslash before a tag keeps it as literal text. */ -}}
+{{- $raw = replace $raw "\\<!--" $esc -}}
+
+{{- $defs := slice
+  (dict "key" "challenge"   "tag" "challenge"   "legacy" "===CHALLENGE===")
+  (dict "key" "explanation" "tag" "explanation" "legacy" "===EXPLANATION===")
+  (dict "key" "codes"       "tag" "code"        "legacy" "===CODE===")
+  (dict "key" "quiz"        "tag" "quiz"        "legacy" "===QUIZ===")
+  (dict "key" "reading"     "tag" "reading"     "legacy" "===READING===") -}}
+
+{{- $hasNew := false -}}
+{{- if or
+  (findRE "(?s)<!--\\s*challenge\\s*-->" $raw)
+  (findRE "(?s)<!--\\s*explanation\\s*-->" $raw)
+  (findRE "(?s)<!--\\s*reading\\s*-->" $raw)
+  (findRE "(?s)<!--\\s*code\\s*-->" $raw)
+  (findRE "(?s)<!--\\s*quiz\\s*-->" $raw)
+  (findRE "<!--\\s*/\\s*challenge\\s*-->" $raw)
+  (findRE "<!--\\s*/\\s*explanation\\s*-->" $raw)
+  (findRE "<!--\\s*/\\s*reading\\s*-->" $raw)
+  (findRE "<!--\\s*/\\s*code\\s*-->" $raw)
+  (findRE "<!--\\s*/\\s*quiz\\s*-->" $raw)
+-}}
+  {{- $hasNew = true -}}
+{{- end -}}
+
+{{- $out := dict -}}
+{{- if $hasNew -}}
+  {{- /* Tag syntax: opening and closing tags are both required; no duplicates. */ -}}
+  {{- range $defs -}}
+    {{- if in $raw .legacy -}}
+      {{- errorf "parse-sections: %q uses tag syntax but also contains the legacy marker %q — do not mix syntaxes in one file" .tag .legacy -}}
+    {{- end -}}
+  {{- end -}}
+  {{- range $defs -}}
+    {{- $tag := .tag -}}
+    {{- $opens := findRE (printf "(?s)<!--\\s*%s\\s*-->" $tag) $raw -}}
+    {{- $closes := findRE (printf "<!--\\s*/\\s*%s\\s*-->" $tag) $raw -}}
+    {{- if ne (len $opens) (len $closes) -}}
+      {{- errorf "parse-sections: section %q has %d opening and %d closing tag(s); both are required" $tag (len $opens) (len $closes) -}}
+    {{- end -}}
+    {{- if gt (len $opens) 1 -}}
+      {{- errorf "parse-sections: section %q is declared %d times; only one is allowed" $tag (len $opens) -}}
+    {{- end -}}
+    {{- $text := "" -}}
+    {{- if eq (len $opens) 1 -}}
+      {{- $m := findRESubmatch (printf "(?s)<!--\\s*%s\\s*-->(.*?)<!--\\s*/\\s*%s\\s*-->" $tag $tag) $raw -}}
+      {{- if $m -}}
+        {{- $text = index (index $m 0) 1 -}}
+      {{- else -}}
+        {{- errorf "parse-sections: section %q is malformed — closing tag must follow its opening tag" $tag -}}
+      {{- end -}}
+    {{- end -}}
+    {{- $out = merge $out (dict .key (replace $text $esc "<!--")) -}}
+  {{- end -}}
+  {{- $hasChallenge := ne (len (findRE "(?s)<!--\\s*challenge\\s*-->" $raw)) 0 -}}
+  {{- $out = merge $out (dict "has_challenge" $hasChallenge) -}}
+  {{- if not $hasChallenge -}}
+    {{- /* Default challenge: the text before the first non-challenge opening tag. */ -}}
+    {{- $cut := $raw -}}
+    {{- $m := findRESubmatch "(?s)^(.*?)<!--\\s*(?:explanation|reading|code|quiz)\\s*-->" $raw -}}
+    {{- if $m -}}
+      {{- $cut = index (index $m 0) 1 -}}
+    {{- end -}}
+    {{- $out = merge $out (dict "challenge" (replace $cut $esc "<!--")) -}}
+  {{- end -}}
+{{- else -}}
+  {{- /* Legacy marker syntax. */ -}}
+  {{- $markers := slice "===CHALLENGE===" "===EXPLANATION===" "===CODE===" "===QUIZ===" "===READING===" -}}
+  {{- $keys := slice "challenge" "explanation" "codes" "quiz" "reading" -}}
+  {{- range $i, $m := $markers -}}
+    {{- $key := index $keys $i -}}
+    {{- $text := "" -}}
+    {{- if in $raw $m -}}
+      {{- $after := index (split $raw $m) 1 -}}
+      {{- /* Trim at the earliest subsequent marker: the earliest marker yields the shortest prefix. */ -}}
+      {{- $cut := $after -}}
+      {{- range $j, $om := $markers -}}
+        {{- if ne $i $j -}}
+          {{- $cand := index (split $after $om) 0 -}}
+          {{- if lt (len $cand) (len $cut) -}}{{- $cut = $cand -}}{{- end -}}
+        {{- end -}}
+      {{- end -}}
+      {{- $text = $cut -}}
+    {{- end -}}
+    {{- $out = merge $out (dict $key (replace $text $esc "<!--")) -}}
+  {{- end -}}
+  {{- $hasChallenge := in $raw "===CHALLENGE===" -}}
+  {{- $out = merge $out (dict "has_challenge" $hasChallenge) -}}
+  {{- if not $hasChallenge -}}
+    {{- $cut := $raw -}}
+    {{- range $m := slice "===EXPLANATION===" "===CODE===" "===QUIZ===" "===READING===" -}}
+      {{- $cand := index (split $raw $m) 0 -}}
+      {{- if lt (len $cand) (len $cut) -}}{{- $cut = $cand -}}{{- end -}}
+    {{- end -}}
+    {{- $out = merge $out (dict "challenge" (replace $cut $esc "<!--")) -}}
+  {{- end -}}
+{{- end -}}
+{{- return $out -}}

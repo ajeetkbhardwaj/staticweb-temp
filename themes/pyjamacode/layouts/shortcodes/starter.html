@@ -1,0 +1,19 @@
+{{- /*
+  Starter code for the editor, usable inside any section (typically the
+  ===CHALLENGE=== section) so the initial code need not live in front matter.
+
+  Usage:
+    {{< starter lang="c" file="main.c" >}}
+    int main(void) { return 0; }
+    {{< /starter >}}
+
+  Repeat for multiple files. The rendered block uses the same shape as
+  ===CODE=== blocks (a <pre data-file> wrapping a <code>), so the editor
+  collects it as a starter file. It is hidden from the rendered prose.
+
+  Precedence in the editor: starter shortcodes > ===CODE===.
+*/ -}}
+{{- $file := .Get "file" | default (.Get 0) | default "main.c" -}}
+{{- $lang := .Get "lang" | default "c" -}}
+{{- $code := trim .Inner "\n\r" -}}
+<pre data-file="{{ $file }}" data-starter="true"><code class="language-{{ $lang }}">{{ $code }}</code></pre>
