@@ -1,0 +1,23 @@
+# Instructor details (site.Data.instructor.<id>)
+
+# name of the instructor
+id: ajeet
+
+name: "Ajeet Kumar"
+
+# summary line
+designation: "Applied Mathematician | Data Scientist | AI/ML Engineer"
+
+orgs: "ex-IIT Delhi"
+
+# photo
+photo: "/images/instructor/profile.jpg"
+
+details:
+  - "Electrical Engineer holding a Master’s degree in Embedded Systems, with a proven track record at industry giants. At Intel, contributed expertise to Navigation Firmware, Bluetooth Driver development, and RF validation software."
+  - "Currently thriving as an Embedded Software Engineer at Google, drove innovation in Firmware development for the Power Management Sub-system on Tensor SoCs (Pixel Phones) and presently advancing system software for the Pixel Watch."
+
+links:
+  linkedin: "https://www.linkedin.com/in/ajeetkumar09/"
+  x: "https://x.com/ajeetkumar09"
+  youtube: "https://www.youtube.com/@mathemates"

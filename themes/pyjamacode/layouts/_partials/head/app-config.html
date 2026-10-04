@@ -1,8 +1,0 @@
-<script>
-window.__APP_CONFIG__ = {
-  judgeUrl: {{ with site.Params.judgeUrl }}"{{ . }}"{{ else }}null{{ end }},
-  mobileBreakpoint: {{ site.Params.mobileBreakpoint | default 800 }},
-  maxSessions: {{ site.Params.maxSessions | default 1 }},
-  allowAuthModalClose: {{ site.Params.allowAuthModalClose | default false }}
-};
-</script>

@@ -1,0 +1,83 @@
+{{ define "main" }}
+<div style="height:100%;overflow:auto">
+
+  <!-- HERO -->
+  <section style="background:radial-gradient(1200px 500px at 50% -200px, rgba(46,230,46,.12), transparent);padding:4rem 0 3rem">
+    <div class="container text-center">
+      <span class="badge rounded-pill text-bg-success mb-3" style="font-size:.8rem">Public Beta · Live</span>
+      <h1 class="display-5 fw-bold mb-3">{{ site.Title }}</h1>
+      <p class="lead mb-4" style="color:var(--bs-secondary-color);max-width:640px;margin:0 auto">
+        A coding platform for embedded systems software and firmware development.
+        Read free articles, then enroll in courses to start your learning journey.
+      </p>
+      <div class="d-flex gap-2 justify-content-center flex-wrap">
+        <a href="{{ "blog/" | relURL }}" class="btn btn-primary btn-lg"><i class="bi bi-book"></i> Read Articles</a>
+        <a href="{{ "courses/" | relURL }}" class="btn btn-outline-secondary btn-lg"><i class="bi bi-mortarboard"></i> Browse Courses</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- COURSE CATALOG -->
+  <section class="py-5">
+    <div class="container">
+      <h2 class="h4 mb-4">Courses</h2>
+      {{ $courseSections := slice }}
+      {{ range site.Pages }}
+        {{ if and (eq .Kind "section") (eq .Section "courses") (ne .RelPermalink "/courses/") }}
+          {{ $courseSections = $courseSections | append . }}
+        {{ end }}
+      {{ end }}
+      {{ if gt (len $courseSections) 0 }}
+      <div class="row g-3">
+        {{ range $courseSections }}
+        <div class="col-md-4">
+          <a href="{{ .RelPermalink }}" class="card h-100 text-decoration-none" style="background:var(--bs-body-bg)">
+            <div class="card-body">
+              <h3 class="h6 mb-2">{{ .Title }}</h3>
+              <p class="small text-muted mb-1">{{ len .Pages }} lessons</p>
+              <p class="small text-muted mb-0">{{ .Params.description | default .Summary | plainify | truncate 100 }}</p>
+            </div>
+          </a>
+        </div>
+        {{ end }}
+      </div>
+      {{ else }}
+      <div class="alert alert-secondary">Courses are coming soon. Check back shortly.</div>
+      {{ end }}
+    </div>
+  </section>
+
+  <!-- BLOG PREVIEW -->
+  <section class="py-5" style="background:rgba(255,255,255,.02)">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="h4 mb-0">Latest Articles</h2>
+        <a href="{{ "blog/" | relURL }}" class="btn btn-sm btn-outline-secondary">View all</a>
+      </div>
+      <div class="row g-3">
+        {{ range first 3 (where .Site.RegularPages "Section" "blog").ByDate.Reverse }}
+        <div class="col-md-4">
+          <a href="{{ .RelPermalink }}" class="card h-100 text-decoration-none" style="background:var(--bs-body-bg)">
+            <div class="card-body">
+              <p class="small text-muted mb-1">{{ .Date.Format "Jan 2, 2006" }}</p>
+              <h3 class="h6">{{ .Title }}</h3>
+              <p class="small text-muted mb-0">{{ .Params.description | plainify | truncate 90 }}</p>
+            </div>
+          </a>
+        </div>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-5 text-center">
+    <div class="container">
+      <h2 class="h4">Start the journey after sign-up</h2>
+      <p class="text-muted">Sign in, enroll in a course, and unlock its full content.</p>
+      <a href="{{ "courses/" | relURL }}" class="btn btn-primary">Get Started</a>
+    </div>
+  </section>
+
+</div>
+{{ end }}

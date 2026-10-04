@@ -1,7 +1,7 @@
 {{ define "main" }}
 {{ $problems := where site.RegularPages "Section" "courses" }}
-{{ $sections := slice }}{{ $courseTitleMap := dict }}{{ range site.Pages }}{{ if and (eq .Section "courses") (eq .Kind "section") .File }}{{ $sections = $sections | append . }}{{ $topic := index (split (strings.TrimSuffix "/" .File.Dir) "/") 1 }}{{ $courseTitleMap = $courseTitleMap | merge (dict $topic .Title) }}{{ end }}{{ end }}
-{{ $active := index $problems 0 }}{{ if reflect.IsMap . }}{{ with .activeProblem }}{{ $active = . }}{{ end }}{{ end }}
+{{ $sections := slice }}{{ $courseTitleMap := dict }}{{ range site.Pages }}{{ if and (eq .Section "courses") (eq .Kind "section") .File (ne .RelPermalink "/courses/") }}{{ $sections = $sections | append . }}{{ $topic := index (split (strings.TrimSuffix "/" .File.Dir) "/") 1 }}{{ $courseTitleMap = $courseTitleMap | merge (dict $topic .Title) }}{{ end }}{{ end }}
+{{ $active := "" }}{{ if gt (len $problems) 0 }}{{ $active = index $problems 0 }}{{ end }}{{ if reflect.IsMap . }}{{ with .activeProblem }}{{ $active = . }}{{ end }}{{ end }}
 {{ $activeId := "" }}{{ with $active }}{{ if .File }}{{ $activeId = .File.ContentBaseName }}{{ end }}{{ end }}
 
 {{/* Course intro split: text before the reading section shown in the center
@@ -83,6 +83,7 @@
     "quiz2" .RawContent
     "reading" ($readingMarkdown | .RenderString)
     "has_challenge" $sections.has_challenge
+    "hidden" (.Params.hidden | default false)
     "test_cases" .Params.test_cases
     "topic" $topic
     "subtopic" $subtopic

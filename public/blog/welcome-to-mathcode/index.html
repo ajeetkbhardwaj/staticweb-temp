@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en-us" data-bs-theme="dark">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome to MathCode | Beta.PyjamaCafe</title>
+<meta name="description" content="Learn embedded systems and firmware, one clear article at a time.">
+
+<meta property="og:title" content="Welcome to MathCode">
+<meta property="og:description" content="Learn embedded systems and firmware, one clear article at a time.">
+<meta property="og:image" content="https://mathcode.com/og.png">
+<meta property="og:url" content="https://mathcode.com/blog/welcome-to-mathcode/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Beta.PyjamaCafe">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Welcome to MathCode">
+<meta name="twitter:description" content="Learn embedded systems and firmware, one clear article at a time.">
+<meta name="twitter:image" content="https://mathcode.com/og.png">
+
+<link rel="icon" type="image/png" href="/pc.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/gas/gas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/shell/shell.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/markdown/markdown.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore-compat.js"></script>
+<script>
+window.__FIREBASE_CONFIG__ = {
+  apiKey: 'AIzaSyC3rYp82RGSZVJrHwq-WrGX-UUgBneAcDo',
+  authDomain: 'code-pyjamacafe.firebaseapp.com',
+  projectId: 'code-pyjamacafe',
+  storageBucket: 'code-pyjamacafe.firebasestorage.app',
+  messagingSenderId: '135975925947',
+  appId: '1:135975925947:web:dbd0d52a358dfc031c919e'
+};
+</script><script>
+window.__APP_CONFIG__ = {
+  mobileBreakpoint:  1279 ,
+  maxSessions:  1 ,
+  allowAuthModalClose:  true 
+};
+</script>
+<script src="https://player.vimeo.com/api/player.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
+
+
+        <link rel="stylesheet" href="/css/main.3e39ab61fa328bc500829d39847b9d2257c8dbb701bf87c060fa54c4844ff814.css" integrity="sha256-PjmrYfoyi8UAgp05hHudIlfI27cBv4fAYPpUxIRP&#43;BQ=">
+
+
+  <script src="/js/auth.js"></script>
+        <script src="/js/main.b55c9ca623e92048f9d1676aa221d13d43761c318aad1de46d8b48e5006c3772.js" integrity="sha256-tVycpiPpIEj50WdqoiHRPUN2HDGKrR3kbYtI5QBsN3I=" defer></script>
+
+
+</head>
+<body class="d-flex flex-column vh-100">
+  <nav class="navbar navbar-expand border-bottom px-3 py-2">
+  <div class="container-fluid d-flex justify-content-between">
+    <a class="navbar-brand fw-bold d-flex align-items-center" href="/" id="homeLink">
+      <img src="/pc.png" alt="Logo" height="28" class="me-2">
+      <span id="typedTitle">Beta.PyjamaCafe</span>
+    </a>
+    <div class="d-flex gap-2 align-items-center">
+      <button id="authLoginBtn" class="btn btn-sm btn-outline-primary d-none" data-bs-toggle="tooltip" title="Sign in"><i class="bi bi-person"></i> <span class="d-none d-sm-inline"> Sign in</span></button>
+      <div id="authUserMenu" class="dropdown d-none">
+        <button class="btn btn-sm btn-outline-secondary d-flex align-items-center" data-bs-toggle="dropdown" aria-expanded="false" id="authAvatarBtn" style="padding:2px 0.5rem;border:none;background:none;position:relative">
+          <span id="authAvatar" class="auth-avatar"></span>
+          <span id="syncDot" class="sync-dot"></span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="authAvatarBtn">
+          <li><span class="dropdown-item-text small text-muted" id="authUserName" style="cursor:default"></span></li>
+          <li><span class="dropdown-item-text small text-muted" id="authUserEmail" style="cursor:default"></span></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="/dashboard/">Dashboard</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><div id="syncBtn" class="sync-dropdown-item d-none">
+            <span id="syncIndicator" class="sync-indicator"><i class="bi bi-cloud-check"></i></span>
+            <span id="syncLabel" class="sync-label">Sync to cloud</span>
+          </div></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item text-danger" href="#" id="resetProfileLink">Reset Profile</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="#" id="authLogoutLink">Sign out</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+
+
+<dialog id="resetConfirmModal" class="reset-dialog">
+  <h3>Reset Profile</h3>
+  <p>This will delete all your saved data (submissions, notes, preferences) from both local storage and the cloud. This cannot be undone.</p>
+  <p class="text-danger fw-semibold">To confirm, type the number below:</p>
+  <div id="resetConfirmCode" class="reset-code-display mb-2">000000</div>
+  <input id="resetConfirmInput" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" class="form-control mb-3 text-center" placeholder="Enter the number above" autocomplete="off">
+  <form method="dialog" class="d-flex flex-column gap-2">
+    <button id="resetConfirmYes" class="btn btn-danger w-100" disabled>Yes, Reset Everything</button>
+    <button id="resetConfirmNo" class="btn btn-outline-secondary w-100" value="cancel">Cancel</button>
+  </form>
+</dialog>
+
+  <main class="flex-grow-1 overflow-hidden">
+    
+<div style="height:100%;overflow:auto">
+  <article class="container py-5" style="max-width:760px">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/blog/">Blog</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Welcome to MathCode</li>
+    </ol></nav>
+    <header class="mb-4">
+      <h1 class="mb-2">Welcome to MathCode</h1>
+      <p class="text-muted small mb-0">Oct 4, 2026 · 1 min read</p>
+    </header>
+    <div class="question-content" style="font-size:1.05rem;line-height:1.8"><p>MathCode is a learning platform for embedded systems software and firmware
+development. Read our articles for free to build the intuition, then pick a
+course to go deeper into hands-on projects.</p>
+</div>
+    <hr class="my-5">
+    <a href="/blog/" class="btn btn-sm btn-outline-secondary">← Back to all articles</a>
+  </article>
+</div>
+
+  </main>
+  <footer class="statusbar">
+  <span class="statusbar-left"></span>
+  <span class="statusbar-center">&copy; 2026 Typobrahe Education LLP. All Rights Reserved.</span>
+  <span class="statusbar-right">
+    <div id="syncBtnFooter" class="sync-btn-footer d-none">
+      <span id="syncIndicatorFooter" class="sync-indicator"><i class="bi bi-cloud-check"></i></span>
+      <span id="syncLabelFooter" class="sync-label">Sync to cloud</span>
+    </div>
+  </span>
+</footer>
+
+<dialog id="syncConfirmModal" class="reset-dialog">
+  <h3>Unsaved Changes</h3>
+  <div id="syncChangesList" style="margin:0 0 1rem;max-height:200px;overflow-y:auto;font-size:0.85rem;line-height:1.5"></div>
+  <form method="dialog" class="d-flex flex-row gap-2">
+    <button id="syncConfirmYes" class="btn btn-primary flex-fill">Sync Now</button>
+    <button id="syncConfirmNo" class="btn btn-outline-secondary flex-fill" value="cancel">Cancel</button>
+  </form>
+</dialog>
+
+</body>
+</html>

@@ -1,12 +1,11 @@
-baseURL = 'https://code.pyjamacafe.com'
+baseURL = 'https://mathcode.com'
 languageCode = 'en-us'
 title = 'Beta.PyjamaCafe'
-theme = 'pyjamacode'
+theme = 'mathcode'
 
 [params]
   author = 'Typobrahe Education LLP'
-  description = 'A coding platform for embedded systems software and firmware development.'
-  judgeUrl = 'https://checker.pyjamacafe.com'
+  description = 'A coding platform for mathematics with code.'
   mobileBreakpoint = 1279
   maxSessions = 1
   allowAuthModalClose = true

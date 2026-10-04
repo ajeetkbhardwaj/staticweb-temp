@@ -1,0 +1,17 @@
+{{ define "main" }}
+<div style="height:100%;overflow:auto">
+  <article class="container py-5" style="max-width:760px">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{{ "blog/" | relURL }}">Blog</a></li>
+      <li class="breadcrumb-item active" aria-current="page">{{ .Title }}</li>
+    </ol></nav>
+    <header class="mb-4">
+      <h1 class="mb-2">{{ .Title }}</h1>
+      <p class="text-muted small mb-0">{{ .Date.Format "Jan 2, 2006" }} · {{ .ReadingTime }} min read</p>
+    </header>
+    <div class="question-content" style="font-size:1.05rem;line-height:1.8">{{ .Content }}</div>
+    <hr class="my-5">
+    <a href="{{ "blog/" | relURL }}" class="btn btn-sm btn-outline-secondary">← Back to all articles</a>
+  </article>
+</div>
+{{ end }}
