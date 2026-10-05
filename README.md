@@ -1,49 +1,56 @@
-# Static Site
+# Math Code Center
 
-A Hugo-based static site for the Beta.PyjamaCafe coding platform.
+**Math Code Center** is an ultra-lightweight, 100% static academic platform for pure and applied mathematics, formal theorem proving in **Lean 4**, and scientific computing in **Python**, **C**, and **Rust**.
 
-## Run locally
+Designed for zero-backend deployment on **GitHub Pages** and **GitLab Pages**, all interactive features—including KaTeX math rendering, Lean 4 / multi-language syntax highlighting, Global Quick Search (`Ctrl+K`), automatic "On This Page" section outlines, and interactive self-check quizzes—run instantaneously in the browser.
 
-```bash
-cd /workspaces/staticweb-temp
-hugo server --bind 0.0.0.0 --port 1313 --disableFastRender
-```
+---
 
-Then open the site in your browser:
+## Navigation & Reader Features
 
-```
-http://localhost:1313/
-```
+- **Global Quick-Jump Search (`Ctrl+K` or `/`)**: Instant command palette in the top navigation bar to jump to any course, lesson, book, chapter, or essay across the platform.
+- **Unified Library (`/library/`)**: Searchable and filterable catalog across all courses, lessons, multi-chapter books, and research essays.
+- **Interactive Courses (`/courses/`)**: Browse the full Courses Catalog with domain filters and syllabus previews, or enter the Course Studio featuring collapsible curriculum trees, Lecture & Proofs, Reading & Code switchers, interactive quizzes with step-by-step proof explanations, and Previous/Next lesson navigation.
+- **Mathematical Monographs (`/books/`)**: Multi-chapter academic books with a persistent chapter sidebar, automatic "On This Page" section outline, and Previous/Next chapter cards.
+- **Research Essays (`/blog/`)**: Long-form technical articles with native inline (`$...$`) and display (`$$...$$`) LaTeX rendering, automatic section outlines, and Previous/Next essay navigation.
 
-## Forward the port (remote/cloud workspace)
+---
 
-If you are running inside a remote or cloud workspace (VS Code Server,
-GitHub Codespaces, etc.):
+## Adding New Courses, Books, or Articles
 
-1. Open the **Ports** panel in VS Code.
-2. Add port **1313** (or click the auto-detected prompt).
-3. Open the forwarded URL in your browser, e.g.:
-
-```
-https://<your-workspace>-1313.<provider>.dev/
-```
-
-## Check that it is running
+You can scaffold new content in seconds using the built-in generator commands (or by adding `.md` files directly under `content/`):
 
 ```bash
-curl -s -o /dev/null -w "HTTP %{http_code}\n" http://localhost:1313/
+# Create a new blog essay in content/blog/
+npm run new:article -- "Title of Your Mathematical Essay"
+
+# Create a new multi-chapter book in content/books/
+npm run new:book -- "Title of Your Monograph"
+
+# Add a new chapter to an existing book
+npm run new:chapter -- <book-slug> "Title of New Chapter"
+
+# Create a new course in content/courses/
+npm run new:course -- "Title of Your Course"
+
+# Add a new lesson to an existing course
+npm run new:lesson -- <course-slug> "Title of New Lesson"
+
+# Rebuild static site into public/
+npm run build
 ```
 
-You should see `HTTP 200`.
+See [`project.md`](./project.md) for full details on Markdown frontmatter (`+++` TOML or `---` YAML), LaTeX math blocks, Lean 4 code blocks, and interactive quiz syntax.
 
-## Build for production
+---
+
+## Local Development & Deployment
 
 ```bash
-hugo
+npm install
+npm run build
+npm run dev
 ```
 
-The site is generated into the `public/` folder.
-
-## Stop the server
-
-Press `Ctrl+C` in the terminal where `hugo server` is running.
+- **GitHub Pages**: `.github/workflows/deploy.yml` automatically builds and deploys `./public` on pushes to `main` or `master`.
+- **GitLab Pages**: `.gitlab-ci.yml` automatically builds and publishes `./public`.

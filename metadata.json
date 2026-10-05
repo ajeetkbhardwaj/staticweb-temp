@@ -1,0 +1,5 @@
+{
+  "name": "Math Code Center",
+  "description": "A platform for pure and applied mathematics, formal proofs in Lean 4, and scientific computing.",
+  "requestFramePermissions": []
+}

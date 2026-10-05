@@ -1,6 +1,24 @@
-{{- $file := .Attributes.file | default "" -}}
-{{- $caption := .Attributes.caption | default "" -}}
-{{- $run := .Attributes.run | default "" -}}
-{{- $cmd := .Attributes.cmd | default "" -}}
-{{- $lang := .Type | default "" -}}
-<pre{{ if $file }} data-file="{{ $file }}"{{ end }}{{ if $caption }} data-caption="{{ $caption }}"{{ end }}{{ if $run }} data-run="1"{{ end }}{{ if $cmd }} data-cmd="{{ $cmd }}"{{ end }}><code class="language-{{ $lang }}">{{ .Inner }}</code></pre>
+{{- $lang := .Type | default "text" -}}
+{{- $langLabel := $lang -}}
+{{- if or (eq $lang "lean") (eq $lang "lean4") -}}{{- $langLabel = "Lean 4" -}}
+{{- else if or (eq $lang "py") (eq $lang "python") -}}{{- $langLabel = "Python" -}}
+{{- else if eq $lang "c" -}}{{- $langLabel = "C" -}}
+{{- else if or (eq $lang "cpp") (eq $lang "c++") -}}{{- $langLabel = "C++" -}}
+{{- else if or (eq $lang "rs") (eq $lang "rust") -}}{{- $langLabel = "Rust" -}}
+{{- else if or (eq $lang "sh") (eq $lang "bash") -}}{{- $langLabel = "Shell" -}}
+{{- end -}}
+{{- $lines := split (strings.TrimRight "\n" .Inner) "\n" -}}
+<div class="code-block" data-lang="{{ $lang }}">
+  <div class="code-block-header">
+    <span class="code-lang-label">{{ $langLabel }}</span>
+    <button class="code-copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').textContent).then(()=>{this.textContent='Copied!';setTimeout(()=>{this.textContent='Copy'},1500)})">Copy</button>
+  </div>
+  <div class="code-block-body">
+    <div class="code-line-numbers" aria-hidden="true">
+      {{- range $i, $_ := $lines }}
+      <span>{{ add $i 1 }}</span>
+      {{- end }}
+    </div>
+    <pre><code class="language-{{ $lang }}">{{ .Inner }}</code></pre>
+  </div>
+</div>

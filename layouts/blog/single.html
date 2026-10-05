@@ -1,17 +1,70 @@
 {{ define "main" }}
-<div style="height:100%;overflow:auto">
-  <article class="container py-5" style="max-width:760px">
-    <nav aria-label="breadcrumb"><ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{{ "blog/" | relURL }}">Blog</a></li>
-      <li class="breadcrumb-item active" aria-current="page">{{ .Title }}</li>
-    </ol></nav>
-    <header class="mb-4">
-      <h1 class="mb-2">{{ .Title }}</h1>
-      <p class="text-muted small mb-0">{{ .Date.Format "Jan 2, 2006" }} · {{ .ReadingTime }} min read</p>
+{{ $articles := (where site.RegularPages "Section" "blog").ByDate.Reverse }}
+{{ $currentPermalink := .RelPermalink }}
+{{ $prevArticle := "" }}
+{{ $nextArticle := "" }}
+{{ range $idx, $art := $articles }}
+  {{ if eq $art.RelPermalink $currentPermalink }}
+    {{ if gt $idx 0 }}{{ $prevArticle = index $articles (sub $idx 1) }}{{ end }}
+    {{ if lt (add $idx 1) (len $articles) }}{{ $nextArticle = index $articles (add $idx 1) }}{{ end }}
+  {{ end }}
+{{ end }}
+
+<div class="studio-scroll-page">
+  <article class="blog-reader-container">
+    <nav class="studio-breadcrumb" aria-label="Breadcrumb">
+      <a href="/library/">Library</a>
+      <span>/</span>
+      <a href="/blog/">Blog &amp; Essays</a>
+      <span>/</span>
+      <span class="current">{{ .Title }}</span>
+    </nav>
+
+    <header class="chapter-header">
+      <div class="card-meta-line">
+        <span class="meta-type-article">RESEARCH ESSAY</span>
+        <span class="meta-dot">&middot;</span>
+        <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
+        <span class="meta-dot">&middot;</span>
+        <span>{{ .Params.domain | default "Mathematics & Code" }}</span>
+        <span class="meta-dot">&middot;</span>
+        <span>{{ .ReadingTime }} min read</span>
+      </div>
+      <h1 class="chapter-title">{{ .Title }}</h1>
+      {{ with .Params.description }}<p class="chapter-lead">{{ . }}</p>{{ end }}
     </header>
-    <div class="question-content" style="font-size:1.05rem;line-height:1.8">{{ .Content }}</div>
-    <hr class="my-5">
-    <a href="{{ "blog/" | relURL }}" class="btn btn-sm btn-outline-secondary">← Back to all articles</a>
+
+    <div id="autoPageToc" class="page-toc-box d-none"></div>
+
+    <div class="markdown-body academic-prose">
+      {{ .Content }}
+    </div>
+
+    <nav class="chapter-pagination" aria-label="Essay Navigation">
+      {{ with $prevArticle }}
+      <a href="{{ .RelPermalink }}" class="chapter-nav-card prev">
+        <span class="chapter-nav-label"><i class="bi bi-arrow-left"></i> Newer Essay</span>
+        <span class="chapter-nav-title">{{ .Title }}</span>
+      </a>
+      {{ else }}
+      <a href="/blog/" class="chapter-nav-card prev">
+        <span class="chapter-nav-label"><i class="bi bi-arrow-left"></i> All Research Essays</span>
+        <span class="chapter-nav-title">Browse the Blog Index</span>
+      </a>
+      {{ end }}
+
+      {{ with $nextArticle }}
+      <a href="{{ .RelPermalink }}" class="chapter-nav-card next">
+        <span class="chapter-nav-label">Next Essay <i class="bi bi-arrow-right"></i></span>
+        <span class="chapter-nav-title">{{ .Title }}</span>
+      </a>
+      {{ else }}
+      <a href="/library/" class="chapter-nav-card next">
+        <span class="chapter-nav-label">Unified Library <i class="bi bi-collection"></i></span>
+        <span class="chapter-nav-title">Explore Courses, Books &amp; Proofs</span>
+      </a>
+      {{ end }}
+    </nav>
   </article>
 </div>
 {{ end }}

@@ -1,19 +1,36 @@
-baseURL = 'https://example.org/'
-languageCode = 'en-US'
-title = 'PyjamaCode'
+baseURL = 'https://mathcode.org'
+languageCode = 'en-us'
+title = 'Math Code Center'
 
-[menus]
-  [[menus.main]]
-    name = 'Home'
-    pageRef = '/'
-    weight = 10
+[params]
+  author = 'Math Code Center'
+  description = 'A platform for pure and applied mathematics, formal proofs in Lean 4, and scientific computing.'
+  mobileBreakpoint = 1279
 
-  [[menus.main]]
-    name = 'Problems'
-    pageRef = '/problems'
-    weight = 20
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+    [markup.goldmark.parser]
+      [markup.goldmark.parser.attribute]
+        block = true
+    [markup.goldmark.extensions]
+      [markup.goldmark.extensions.passthrough]
+        enable = true
+        [markup.goldmark.extensions.passthrough.delimiters]
+          block = [['$$', '$$'], ['\[', '\]']]
+          inline = [['$', '$'], ['\(', '\)']]
 
-[module]
-  [module.hugoVersion]
-    extended = false
-    min = '0.146.0'
+  [markup.highlight]
+    style = 'github-dark'
+    noClasses = true
+    codeFences = true
+
+disableKinds = ['taxonomy', 'term']
+
+[taxonomies]
+
+[outputs]
+  home = ['HTML']
+  section = ['HTML']
+  page = ['HTML']

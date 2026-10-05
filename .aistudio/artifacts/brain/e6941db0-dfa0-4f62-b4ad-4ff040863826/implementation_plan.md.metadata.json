@@ -1,0 +1,6 @@
+{
+  "summary":  "Implementation plan to upgrade the Courses Catalog (/courses/), Books Catalog (/books/), Blog & Research Essays (/blog/), and Home Page to a unified 3-column architectural card grid with automatic Math & Code visual headers and LaTeX formula preview banners, plus workspace cleanup and .gitignore enhancements.",
+  "updatedAt":  "2026-10-05T05:13:22.859538923Z",
+  "requestFeedback":  true,
+  "userFacing":  true
+}

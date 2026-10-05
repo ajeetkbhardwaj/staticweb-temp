@@ -1,0 +1,20 @@
+{
+  "name": "math-code-center",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "build": "node scripts/build-static.mjs",
+    "start": "node server.js",
+    "lint": "node --check server.js && node --check scripts/build-static.mjs && node --check scripts/new-content.mjs",
+    "new:article": "node scripts/new-content.mjs article",
+    "new:book": "node scripts/new-content.mjs book",
+    "new:chapter": "node scripts/new-content.mjs chapter",
+    "new:course": "node scripts/new-content.mjs course",
+    "new:lesson": "node scripts/new-content.mjs lesson"
+  },
+  "dependencies": {
+    "marked": "^15.0.7"
+  }
+}

@@ -1,13 +1,13 @@
-name = 'PyjamaCode'
+name = 'MathCode'
 license = 'MIT'
-licenselink = 'https://github.com/yourname/pyjamacode/blob/main/LICENSE'
-description = 'A three-pane coding platform theme for embedded systems problems.'
-homepage = 'https://example.org/'
-demosite = 'https://example.org/'
-tags = ['coding-platform', 'education', 'embedded-systems', 'dark-mode', 'bootstrap']
-features = ['responsive', 'dark-mode', 'problem-posts', 'code-editor']
+licenselink = 'https://mathcode.org'
+description = 'Dark Academic & Formal Proof Studio theme for Math Code Center (Pure & Applied Mathematics, Lean 4 Proofs, and Scientific Computing).'
+homepage = 'https://mathcode.org'
+demosite = 'https://mathcode.org'
+tags = ['mathematics', 'lean4', 'formal-proofs', 'scientific-computing', 'katex', 'static-site']
+features = ['responsive', 'dark-mode', 'light-mode', 'katex-math', 'lean4-highlighting', 'unified-library']
 min_version = '0.146.0'
 
 [author]
-  name = 'Embedded Systems Instructor'
-  homepage = 'https://example.org/'
+  name = 'Math Code Center'
+  homepage = 'https://mathcode.org'

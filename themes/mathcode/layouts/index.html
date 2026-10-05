@@ -1,83 +1,213 @@
 {{ define "main" }}
-<div style="height:100%;overflow:auto">
+{{ $courses := slice }}
+{{ range site.Pages }}{{ if and (eq .Section "courses") (eq .Kind "section") .File (ne .RelPermalink "/courses/") }}{{ $courses = $courses | append . }}{{ end }}{{ end }}
+{{ $books := slice }}
+{{ range site.Pages }}{{ if and (eq .Section "books") (eq .Kind "section") .File (ne .RelPermalink "/books/") }}{{ $books = $books | append . }}{{ end }}{{ end }}
+{{ $articles := where site.RegularPages "Section" "blog" }}
 
-  <!-- HERO -->
-  <section style="background:radial-gradient(1200px 500px at 50% -200px, rgba(46,230,46,.12), transparent);padding:4rem 0 3rem">
-    <div class="container text-center">
-      <span class="badge rounded-pill text-bg-success mb-3" style="font-size:.8rem">Public Beta · Live</span>
-      <h1 class="display-5 fw-bold mb-3">{{ site.Title }}</h1>
-      <p class="lead mb-4" style="color:var(--bs-secondary-color);max-width:640px;margin:0 auto">
-        A coding platform for embedded systems software and firmware development.
-        Read free articles, then enroll in courses to start your learning journey.
-      </p>
-      <div class="d-flex gap-2 justify-content-center flex-wrap">
-        <a href="{{ "blog/" | relURL }}" class="btn btn-primary btn-lg"><i class="bi bi-book"></i> Read Articles</a>
-        <a href="{{ "courses/" | relURL }}" class="btn btn-outline-secondary btn-lg"><i class="bi bi-mortarboard"></i> Browse Courses</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- COURSE CATALOG -->
-  <section class="py-5">
-    <div class="container">
-      <h2 class="h4 mb-4">Courses</h2>
-      {{ $courseSections := slice }}
-      {{ range site.Pages }}
-        {{ if and (eq .Kind "section") (eq .Section "courses") (ne .RelPermalink "/courses/") }}
-          {{ $courseSections = $courseSections | append . }}
-        {{ end }}
-      {{ end }}
-      {{ if gt (len $courseSections) 0 }}
-      <div class="row g-3">
-        {{ range $courseSections }}
-        <div class="col-md-4">
-          <a href="{{ .RelPermalink }}" class="card h-100 text-decoration-none" style="background:var(--bs-body-bg)">
-            <div class="card-body">
-              <h3 class="h6 mb-2">{{ .Title }}</h3>
-              <p class="small text-muted mb-1">{{ len .Pages }} lessons</p>
-              <p class="small text-muted mb-0">{{ .Params.description | default .Summary | plainify | truncate 100 }}</p>
-            </div>
+<div class="studio-scroll-page">
+  <div class="studio-container">
+    <!-- Hero Section -->
+    <section class="studio-hero">
+      <div class="studio-hero-copy">
+        <div class="studio-eyebrow">PURE &amp; APPLIED MATHEMATICS &middot; FORMAL PROOFS &middot; SCIENTIFIC COMPUTING</div>
+        <h1 class="studio-display-title">Where Formal Mathematical Proof Meets Executable Code.</h1>
+        <p class="studio-lead">
+          Math Code Center is an open academic studio uniting rigorous mathematical exposition in LaTeX, constructive theorem proving in <strong>Lean 4</strong>, and scientific computation in <strong>Python</strong>, <strong>C</strong>, and <strong>Rust</strong>.
+        </p>
+        <div class="studio-cta-row">
+          <a href="/library/" class="btn-studio-primary">
+            <i class="bi bi-collection"></i> Explore Unified Library
+          </a>
+          <a href="/courses/" class="btn-studio-secondary">
+            <i class="bi bi-terminal"></i> Interactive Courses
+          </a>
+          <a href="/books/" class="btn-studio-secondary">
+            <i class="bi bi-book"></i> Read Monographs
           </a>
         </div>
-        {{ end }}
-      </div>
-      {{ else }}
-      <div class="alert alert-secondary">Courses are coming soon. Check back shortly.</div>
-      {{ end }}
-    </div>
-  </section>
-
-  <!-- BLOG PREVIEW -->
-  <section class="py-5" style="background:rgba(255,255,255,.02)">
-    <div class="container">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="h4 mb-0">Latest Articles</h2>
-        <a href="{{ "blog/" | relURL }}" class="btn btn-sm btn-outline-secondary">View all</a>
-      </div>
-      <div class="row g-3">
-        {{ range first 3 (where .Site.RegularPages "Section" "blog").ByDate.Reverse }}
-        <div class="col-md-4">
-          <a href="{{ .RelPermalink }}" class="card h-100 text-decoration-none" style="background:var(--bs-body-bg)">
-            <div class="card-body">
-              <p class="small text-muted mb-1">{{ .Date.Format "Jan 2, 2006" }}</p>
-              <h3 class="h6">{{ .Title }}</h3>
-              <p class="small text-muted mb-0">{{ .Params.description | plainify | truncate 90 }}</p>
-            </div>
-          </a>
+        <div class="studio-meta-line">
+          <span>{{ len $courses }} Interactive Courses</span>
+          <span class="meta-dot">&middot;</span>
+          <span>{{ len $books }} Mathematical Monographs</span>
+          <span class="meta-dot">&middot;</span>
+          <span>{{ len $articles }} Research Essays</span>
+          <span class="meta-dot">&middot;</span>
+          <span>Native LaTeX &amp; Lean 4</span>
         </div>
+      </div>
+
+      <div class="studio-hero-showcase">
+        <div class="hero-visual-frame">
+          <img src="/images/hero_math_code_studio.jpg" alt="Geometric manifolds, commutative diagrams, and formal proof trees" class="hero-visual-img">
+          <div class="hero-proof-overlay">
+            <div class="hero-proof-header">
+              <span class="proof-status-indicator"><i class="bi bi-check2-circle"></i> Verified Formalization</span>
+              <span class="proof-lang-meta">Lean 4 &middot; Mathlib</span>
+            </div>
+            <div class="hero-proof-formula">
+              $$\forall f : \alpha \to \beta,\; \text{Injective}(f) \iff \forall x_1\, x_2,\; f(x_1) = f(x_2) \implies x_1 = x_2$$
+            </div>
+            <pre class="hero-proof-code"><code class="language-lean">theorem comp_injective {f : α → β} {g : β → γ}
+    (hf : Injective f) (hg : Injective g) :
+    Injective (g ∘ f) :=
+  fun _ _ h => hf (hg h)</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Four Architectural Pillars -->
+    <section class="studio-section">
+      <div class="section-header-row">
+        <div>
+          <div class="section-kicker">ARCHITECTURE OF THOUGHT</div>
+          <h2 class="section-title">Four Integrated Pillars of Study</h2>
+        </div>
+        <a href="/library/" class="section-link">Search full catalog <i class="bi bi-arrow-right"></i></a>
+      </div>
+
+      <div class="pillars-grid">
+        <a href="/library/" class="pillar-card">
+          <div class="pillar-top">
+            <span class="pillar-index">01</span>
+            <i class="bi bi-collection pillar-icon"></i>
+          </div>
+          <h3 class="pillar-title">Unified Library</h3>
+          <p class="pillar-desc">Search and filter every course, multi-chapter book, Lean 4 formalization, and mathematical article from a single index.</p>
+          <div class="pillar-meta">ALL RESOURCES &middot; INSTANT FILTER</div>
+        </a>
+
+        <a href="/courses/" class="pillar-card">
+          <div class="pillar-top">
+            <span class="pillar-index">02</span>
+            <i class="bi bi-easel2 pillar-icon"></i>
+          </div>
+          <h3 class="pillar-title">Interactive Courses</h3>
+          <p class="pillar-desc">Structured lectures, curated readings, multi-language code implementations, and interactive quizzes with LaTeX solutions.</p>
+          <div class="pillar-meta">{{ len $courses }} TRACKS &middot; QUIZZES &amp; CODE</div>
+        </a>
+
+        <a href="/books/" class="pillar-card">
+          <div class="pillar-top">
+            <span class="pillar-index">03</span>
+            <i class="bi bi-journal-bookmark pillar-icon"></i>
+          </div>
+          <h3 class="pillar-title">Mathematical Monographs</h3>
+          <p class="pillar-desc">Self-contained multi-chapter books on Dependent Type Theory, Spectral Linear Algebra, and Functional Analysis.</p>
+          <div class="pillar-meta">{{ len $books }} MONOGRAPHS &middot; CHAPTER READER</div>
+        </a>
+
+        <a href="/blog/" class="pillar-card">
+          <div class="pillar-top">
+            <span class="pillar-index">04</span>
+            <i class="bi bi-pen pillar-icon"></i>
+          </div>
+          <h3 class="pillar-title">Research Essays &amp; Blog</h3>
+          <p class="pillar-desc">Deep technical expositions on Curry–Howard correspondence, spectral graph theory, automatic differentiation, and PDEs.</p>
+          <div class="pillar-meta">{{ len $articles }} ESSAYS &middot; LONG-FORM LATEX</div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Featured Courses -->
+    <section class="studio-section">
+      <div class="section-header-row">
+        <div>
+          <div class="section-kicker">INTERACTIVE CURRICULUM</div>
+          <h2 class="section-title">Core Mathematics &amp; Code Courses</h2>
+        </div>
+        <a href="/courses/" class="section-link">Open Course Workspace <i class="bi bi-arrow-right"></i></a>
+      </div>
+
+      <div class="catalog-grid-3">
+        {{ range $courses }}
+        {{ $lessons := where site.RegularPages "Section" "courses" }}
+        <article class="studio-card">
+          <div class="card-meta-line">
+            <span>COURSE</span>
+            <span class="meta-dot">&middot;</span>
+            <span>{{ .Params.domain | default "Mathematics & Code" }}</span>
+            <span class="meta-dot">&middot;</span>
+            <span>{{ .Params.level | default "Intermediate" }}</span>
+          </div>
+          <h3 class="card-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+          <p class="card-excerpt">{{ .Params.description }}</p>
+          <div class="card-footer-row">
+            <a href="{{ .RelPermalink }}" class="card-action-link">Enter Course Studio <i class="bi bi-arrow-up-right"></i></a>
+          </div>
+        </article>
         {{ end }}
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- CTA -->
-  <section class="py-5 text-center">
-    <div class="container">
-      <h2 class="h4">Start the journey after sign-up</h2>
-      <p class="text-muted">Sign in, enroll in a course, and unlock its full content.</p>
-      <a href="{{ "courses/" | relURL }}" class="btn btn-primary">Get Started</a>
-    </div>
-  </section>
+    <!-- Featured Books / Monographs -->
+    <section class="studio-section">
+      <div class="section-header-row">
+        <div>
+          <div class="section-kicker">UNIVERSITY PRESS STUDIO</div>
+          <h2 class="section-title">Mathematical &amp; Computational Monographs</h2>
+        </div>
+        <a href="/books/" class="section-link">View All Books <i class="bi bi-arrow-right"></i></a>
+      </div>
 
+      <div class="books-showcase-grid">
+        {{ range $books }}
+        <article class="book-showcase-card">
+          <a href="{{ .RelPermalink }}" class="book-cover-wrap">
+            <img src="{{ .Params.cover | default "/images/book_lean4_proofs.jpg" }}" alt="{{ .Title }}" class="book-cover-img" loading="lazy">
+          </a>
+          <div class="book-card-body">
+            <div class="card-meta-line">
+              <span>MONOGRAPH</span>
+              <span class="meta-dot">&middot;</span>
+              <span>{{ .Params.domain }}</span>
+              <span class="meta-dot">&middot;</span>
+              <span>{{ len .RegularPages }} Chapters</span>
+            </div>
+            <h3 class="book-card-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+            {{ with .Params.subtitle }}<div class="book-card-subtitle">{{ . }}</div>{{ end }}
+            <p class="card-excerpt">{{ .Params.description }}</p>
+            <div class="card-footer-row">
+              <a href="{{ .RelPermalink }}" class="card-action-link">Read Monograph <i class="bi bi-arrow-right"></i></a>
+            </div>
+          </div>
+        </article>
+        {{ end }}
+      </div>
+    </section>
+
+    <!-- Latest Blog Articles -->
+    <section class="studio-section">
+      <div class="section-header-row">
+        <div>
+          <div class="section-kicker">EXPOSITIONS &amp; PROOFS</div>
+          <h2 class="section-title">Recent Articles &amp; Technical Notes</h2>
+        </div>
+        <a href="/blog/" class="section-link">All Articles <i class="bi bi-arrow-right"></i></a>
+      </div>
+
+      <div class="articles-list-grid">
+        {{ range first 4 $articles }}
+        <article class="studio-article-row">
+          <div class="article-row-main">
+            <div class="card-meta-line">
+              <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2, 2006" }}</time>
+              <span class="meta-dot">&middot;</span>
+              <span>{{ .Params.domain | default "Mathematics & Code" }}</span>
+              <span class="meta-dot">&middot;</span>
+              <span>{{ .ReadingTime }} min read</span>
+            </div>
+            <h3 class="article-row-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+            <p class="article-row-desc">{{ .Params.description | default (.Summary | plainify | truncate 160) }}</p>
+          </div>
+          <div class="article-row-cta">
+            <a href="{{ .RelPermalink }}" class="card-action-link">Read Essay <i class="bi bi-arrow-right"></i></a>
+          </div>
+        </article>
+        {{ end }}
+      </div>
+    </section>
+  </div>
 </div>
 {{ end }}

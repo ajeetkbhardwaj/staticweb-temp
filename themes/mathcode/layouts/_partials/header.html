@@ -1,45 +1,63 @@
-<nav class="navbar navbar-expand border-bottom px-3 py-2">
-  <div class="container-fluid d-flex justify-content-between">
-    <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ "/" | relURL }}" id="homeLink">
-      <img src="{{ "pc.png" | relURL }}" alt="Logo" height="28" class="me-2">
-      <span id="typedTitle">{{ site.Title }}</span>
+<header class="topbar">
+  <div class="topbar-zone topbar-left">
+    <button id="sidebarToggleBtn" class="topbar-icon-btn d-none" type="button" aria-label="Toggle Curriculum Drawer" title="Toggle Sidebar">
+      <i class="bi bi-layout-sidebar-inset"></i>
+    </button>
+    <a href="/" class="brand-link" aria-label="Math Code Center Home">
+      <span class="brand-glyph" aria-hidden="true">&sum;</span>
+      <span class="brand-text">Math Code Center</span>
     </a>
-    <div class="d-flex gap-2 align-items-center">
-      <button id="authLoginBtn" class="btn btn-sm btn-outline-primary d-none" data-bs-toggle="tooltip" title="Sign in"><i class="bi bi-person"></i> <span class="d-none d-sm-inline"> Sign in</span></button>
-      <div id="authUserMenu" class="dropdown d-none">
-        <button class="btn btn-sm btn-outline-secondary d-flex align-items-center" data-bs-toggle="dropdown" aria-expanded="false" id="authAvatarBtn" style="padding:2px 0.5rem;border:none;background:none;position:relative">
-          <span id="authAvatar" class="auth-avatar"></span>
-          <span id="syncDot" class="sync-dot"></span>
-        </button>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="authAvatarBtn">
-          <li><span class="dropdown-item-text small text-muted" id="authUserName" style="cursor:default"></span></li>
-          <li><span class="dropdown-item-text small text-muted" id="authUserEmail" style="cursor:default"></span></li>
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item" href="{{ "dashboard/" | relURL }}">Dashboard</a></li>
-          <li><hr class="dropdown-divider"></li>
-          <li><div id="syncBtn" class="sync-dropdown-item d-none">
-            <span id="syncIndicator" class="sync-indicator"><i class="bi bi-cloud-check"></i></span>
-            <span id="syncLabel" class="sync-label">Sync to cloud</span>
-          </div></li>
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item text-danger" href="#" id="resetProfileLink">Reset Profile</a></li>
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item" href="#" id="authLogoutLink">Sign out</a></li>
-        </ul>
-      </div>
-    </div>
   </div>
+
+  <nav class="topbar-zone topbar-center" id="primaryNav" aria-label="Primary Navigation">
+    <a href="/library/" class="topnav-link{{ if eq .Section "library" }} active{{ end }}">Library</a>
+    <a href="/courses/" class="topnav-link{{ if eq .Section "courses" }} active{{ end }}">Courses</a>
+    <a href="/books/" class="topnav-link{{ if eq .Section "books" }} active{{ end }}">Books</a>
+    <a href="/blog/" class="topnav-link{{ if eq .Section "blog" }} active{{ end }}">Blog</a>
+  </nav>
+
+  <div class="topbar-zone topbar-right">
+    <button id="globalSearchBtn" class="topbar-search-trigger" type="button" aria-label="Quick Search across all courses, books, and articles" title="Quick Search (Ctrl+K or /)">
+      <i class="bi bi-search"></i>
+      <span class="topbar-search-label">Search...</span>
+      <kbd class="topbar-search-kbd">Ctrl K</kbd>
+    </button>
+    <button id="themeToggleBtn" class="topbar-icon-btn" type="button" aria-label="Toggle dark and light theme" title="Toggle theme (Dark / Light)">
+      <i class="bi bi-sun" id="themeToggleIcon"></i>
+    </button>
+    <button id="mobileNavToggleBtn" class="topbar-icon-btn d-md-none" type="button" aria-label="Toggle Navigation Menu" title="Menu">
+      <i class="bi bi-list"></i>
+    </button>
+  </div>
+</header>
+
+<!-- Mobile Navigation Bar -->
+<nav id="mobileNavDrawer" class="mobile-nav-drawer d-none" aria-label="Mobile Navigation">
+  <a href="/library/" class="mobile-nav-link{{ if eq .Section "library" }} active{{ end }}"><i class="bi bi-collection"></i> Unified Library</a>
+  <a href="/courses/" class="mobile-nav-link{{ if eq .Section "courses" }} active{{ end }}"><i class="bi bi-easel2"></i> Interactive Courses</a>
+  <a href="/books/" class="mobile-nav-link{{ if eq .Section "books" }} active{{ end }}"><i class="bi bi-journal-bookmark"></i> Mathematical Monographs</a>
+  <a href="/blog/" class="mobile-nav-link{{ if eq .Section "blog" }} active{{ end }}"><i class="bi bi-pen"></i> Research Essays &amp; Blog</a>
 </nav>
 
-<!-- Reset confirmation modal -->
-<dialog id="resetConfirmModal" class="reset-dialog">
-  <h3>Reset Profile</h3>
-  <p>This will delete all your saved data (submissions, notes, preferences) from both local storage and the cloud. This cannot be undone.</p>
-  <p class="text-danger fw-semibold">To confirm, type the number below:</p>
-  <div id="resetConfirmCode" class="reset-code-display mb-2">000000</div>
-  <input id="resetConfirmInput" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" class="form-control mb-3 text-center" placeholder="Enter the number above" autocomplete="off">
-  <form method="dialog" class="d-flex flex-column gap-2">
-    <button id="resetConfirmYes" class="btn btn-danger w-100" disabled>Yes, Reset Everything</button>
-    <button id="resetConfirmNo" class="btn btn-outline-secondary w-100" value="cancel">Cancel</button>
-  </form>
-</dialog>
+<!-- Global Quick-Jump Search Modal (Ctrl+K / /) -->
+<div id="globalSearchModal" class="search-modal-backdrop d-none" role="dialog" aria-modal="true" aria-label="Global Catalog Search">
+  <div class="search-modal-dialog">
+    <div class="search-modal-header">
+      <i class="bi bi-search search-modal-icon"></i>
+      <input type="search" id="globalSearchInput" class="search-modal-input" placeholder="Jump to any course, lesson, book chapter, theorem, or essay..." autocomplete="off">
+      <button type="button" id="globalSearchCloseBtn" class="topbar-icon-btn" aria-label="Close search"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="search-modal-filters" role="group" aria-label="Filter search results by type">
+      <button type="button" class="filter-seg-btn active" data-search-type="all">All</button>
+      <button type="button" class="filter-seg-btn" data-search-type="course">Courses &amp; Lessons</button>
+      <button type="button" class="filter-seg-btn" data-search-type="book">Books &amp; Chapters</button>
+      <button type="button" class="filter-seg-btn" data-search-type="article">Blog Essays</button>
+    </div>
+    <div id="globalSearchResults" class="search-modal-results"></div>
+    <div class="search-modal-footer">
+      <span><kbd>&uarr;</kbd> <kbd>&darr;</kbd> to navigate</span>
+      <span><kbd>Enter</kbd> to open</span>
+      <span><kbd>Esc</kbd> to close</span>
+    </div>
+  </div>
+</div>

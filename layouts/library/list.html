@@ -1,0 +1,136 @@
+{{ define "main" }}
+{{ $courses := slice }}
+{{ range site.Pages }}{{ if and (eq .Section "courses") (eq .Kind "section") .File (ne .RelPermalink "/courses/") }}{{ $courses = $courses | append . }}{{ end }}{{ end }}
+{{ $lessons := where site.RegularPages "Section" "courses" }}
+{{ $books := slice }}
+{{ range site.Pages }}{{ if and (eq .Section "books") (eq .Kind "section") .File (ne .RelPermalink "/books/") }}{{ $books = $books | append . }}{{ end }}{{ end }}
+{{ $articles := where site.RegularPages "Section" "blog" }}
+
+<div class="studio-scroll-page">
+  <div class="studio-container">
+    <header class="page-studio-header">
+      <div class="studio-eyebrow">UNIFIED KNOWLEDGE INDEX</div>
+      <h1 class="page-studio-title">Math Code Center Library</h1>
+      <p class="page-studio-desc">
+        Browse and filter all interactive courses, lessons, multi-chapter mathematical monographs, and research articles across pure mathematics, applied scientific computing, and Lean 4 theorem proving.
+      </p>
+
+      <!-- Search and Filters Bar -->
+      <div class="library-controls-bar">
+        <div class="library-search-wrap">
+          <i class="bi bi-search library-search-icon"></i>
+          <input type="search" id="librarySearchInput" class="library-search-input" placeholder="Search theorems, Lean 4 tactics, spectral methods, PDEs, dual numbers..." autocomplete="off">
+        </div>
+
+        <div class="library-filter-groups">
+          <div class="filter-group" role="group" aria-label="Filter by resource type">
+            <button type="button" class="filter-btn active" data-filter-type="all">All Resources</button>
+            <button type="button" class="filter-btn" data-filter-type="course">Courses &amp; Lessons</button>
+            <button type="button" class="filter-btn" data-filter-type="book">Books</button>
+            <button type="button" class="filter-btn" data-filter-type="article">Articles</button>
+          </div>
+
+          <div class="filter-group" role="group" aria-label="Filter by mathematical domain">
+            <button type="button" class="filter-btn active" data-filter-domain="all">All Domains</button>
+            <button type="button" class="filter-btn" data-filter-domain="Lean 4 & Proofs">Lean 4 &amp; Proofs</button>
+            <button type="button" class="filter-btn" data-filter-domain="Pure Math">Pure Math</button>
+            <button type="button" class="filter-btn" data-filter-domain="Applied Math">Applied Math</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="library-results-bar">
+        <span id="libraryResultCount" class="library-count-text">Showing all resources</span>
+        <button type="button" id="libraryResetBtn" class="library-reset-link d-none">Reset filters</button>
+      </div>
+    </header>
+
+    <div id="libraryCatalogGrid" class="catalog-grid-3">
+      <!-- Books -->
+      {{ range $books }}
+      <article class="studio-card library-item-card" data-type="book" data-domain="{{ .Params.domain }}" data-search="{{ lower (printf "%s %s %s %s" .Title .Params.subtitle .Params.description .Params.domain) }}">
+        <div class="card-meta-line">
+          <span class="meta-type-book">MONOGRAPH</span>
+          <span class="meta-dot">&middot;</span>
+          <span>{{ .Params.domain }}</span>
+          <span class="meta-dot">&middot;</span>
+          <span>{{ len .RegularPages }} Chapters</span>
+        </div>
+        <h3 class="card-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+        <p class="card-excerpt">{{ .Params.description }}</p>
+        <div class="card-chapter-links">
+          {{ range .RegularPages }}
+          <a href="{{ .RelPermalink }}" class="chapter-mini-link"><i class="bi bi-file-earmark-text"></i> {{ .Title }}</a>
+          {{ end }}
+        </div>
+        <div class="card-footer-row">
+          <a href="{{ .RelPermalink }}" class="card-action-link">Read Monograph <i class="bi bi-arrow-right"></i></a>
+        </div>
+      </article>
+      {{ end }}
+
+      <!-- Courses -->
+      {{ range $courses }}
+      <article class="studio-card library-item-card" data-type="course" data-domain="{{ .Params.domain }}" data-search="{{ lower (printf "%s %s %s" .Title .Params.description .Params.domain) }}">
+        <div class="card-meta-line">
+          <span class="meta-type-course">COURSE TRACK</span>
+          <span class="meta-dot">&middot;</span>
+          <span>{{ .Params.domain }}</span>
+          <span class="meta-dot">&middot;</span>
+          <span>{{ .Params.level }}</span>
+        </div>
+        <h3 class="card-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+        <p class="card-excerpt">{{ .Params.description }}</p>
+        <div class="card-footer-row">
+          <a href="{{ .RelPermalink }}" class="card-action-link">Start Course <i class="bi bi-arrow-right"></i></a>
+        </div>
+      </article>
+      {{ end }}
+
+      <!-- Course Lessons -->
+      {{ range $lessons }}
+      <article class="studio-card library-item-card" data-type="course" data-domain="{{ .Params.domain }}" data-search="{{ lower (printf "%s %s %s %s" .Title .Params.description .Params.domain .Params.language) }}">
+        <div class="card-meta-line">
+          <span class="meta-type-course">INTERACTIVE LESSON</span>
+          <span class="meta-dot">&middot;</span>
+          <span>{{ .Params.domain | default "Mathematics & Code" }}</span>
+          <span class="meta-dot">&middot;</span>
+          <span>{{ upper (.Params.language | default "code") }}</span>
+        </div>
+        <h3 class="card-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+        <p class="card-excerpt">{{ .Params.description }}</p>
+        <div class="card-footer-row">
+          <a href="{{ .RelPermalink }}" class="card-action-link">Open Lesson &amp; Quiz <i class="bi bi-arrow-right"></i></a>
+        </div>
+      </article>
+      {{ end }}
+
+      <!-- Blog Articles -->
+      {{ range $articles }}
+      <article class="studio-card library-item-card" data-type="article" data-domain="{{ .Params.domain }}" data-search="{{ lower (printf "%s %s %s" .Title .Params.description .Params.domain) }}">
+        <div class="card-meta-line">
+          <span class="meta-type-article">RESEARCH ESSAY</span>
+          <span class="meta-dot">&middot;</span>
+          <span>{{ .Params.domain | default "Pure & Applied Math" }}</span>
+          <span class="meta-dot">&middot;</span>
+          <span>{{ .ReadingTime }} min read</span>
+        </div>
+        <h3 class="card-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+        <p class="card-excerpt">{{ .Params.description }}</p>
+        <div class="card-footer-row">
+          <a href="{{ .RelPermalink }}" class="card-action-link">Read Article <i class="bi bi-arrow-right"></i></a>
+        </div>
+      </article>
+      {{ end }}
+    </div>
+
+    <!-- Empty State -->
+    <div id="libraryEmptyState" class="library-empty-state d-none">
+      <i class="bi bi-journal-x empty-state-icon"></i>
+      <h3>No matching mathematical resources found</h3>
+      <p>Try broadening your search terms or resetting the active resource and domain filters.</p>
+      <button type="button" id="libraryEmptyResetBtn" class="btn-studio-secondary">Reset All Filters</button>
+    </div>
+  </div>
+</div>
+{{ end }}

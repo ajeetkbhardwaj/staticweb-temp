@@ -1,0 +1,91 @@
+{{ define "main" }}
+{{ $book := .Parent }}
+{{ $chapters := $book.RegularPages.ByWeight }}
+{{ $currentPermalink := .RelPermalink }}
+{{ $prevChapter := "" }}
+{{ $nextChapter := "" }}
+{{ range $idx, $ch := $chapters }}
+  {{ if eq $ch.RelPermalink $currentPermalink }}
+    {{ if gt $idx 0 }}{{ $prevChapter = index $chapters (sub $idx 1) }}{{ end }}
+    {{ if lt (add $idx 1) (len $chapters) }}{{ $nextChapter = index $chapters (add $idx 1) }}{{ end }}
+  {{ end }}
+{{ end }}
+
+<div class="book-reader-layout">
+  <aside class="book-reader-sidebar" id="bookReaderSidebar">
+    <div class="book-sidebar-header">
+      <a href="/books/" class="book-sidebar-back"><i class="bi bi-arrow-left"></i> All Monographs</a>
+      <h2 class="book-sidebar-title"><a href="{{ $book.RelPermalink }}">{{ $book.Title }}</a></h2>
+      <div class="card-meta-line">{{ $book.Params.domain }} &middot; {{ len $chapters }} Chapters</div>
+    </div>
+    <nav class="book-sidebar-toc" aria-label="Book Chapters">
+      <a href="{{ $book.RelPermalink }}" class="book-toc-item">
+        <span class="toc-item-num">00</span>
+        <span class="toc-item-text">Preface &amp; Overview</span>
+      </a>
+      {{ range $chapters }}
+      <a href="{{ .RelPermalink }}" class="book-toc-item{{ if eq .RelPermalink $currentPermalink }} active{{ end }}">
+        <span class="toc-item-num">Ch. {{ .Params.chapter | default .Weight }}</span>
+        <span class="toc-item-text">{{ .Title }}</span>
+      </a>
+      {{ end }}
+    </nav>
+  </aside>
+
+  <article class="book-reader-main">
+    <div class="book-reader-prose">
+      <nav class="studio-breadcrumb" aria-label="Breadcrumb">
+        <a href="/library/">Library</a>
+        <span>/</span>
+        <a href="/books/">Books</a>
+        <span>/</span>
+        <a href="{{ $book.RelPermalink }}">{{ $book.Title }}</a>
+      </nav>
+
+      <header class="chapter-header">
+        <div class="card-meta-line">
+          <span class="meta-type-book">CHAPTER {{ .Params.chapter | default .Weight }}</span>
+          <span class="meta-dot">&middot;</span>
+          <span>{{ $book.Params.domain }}</span>
+          <span class="meta-dot">&middot;</span>
+          <span>{{ .ReadingTime }} min read</span>
+        </div>
+        <h1 class="chapter-title">{{ .Title }}</h1>
+        {{ with .Params.description }}<p class="chapter-lead">{{ . }}</p>{{ end }}
+      </header>
+
+      <div id="autoPageToc" class="page-toc-box d-none"></div>
+
+      <div class="markdown-body academic-prose">
+        {{ .Content }}
+      </div>
+
+      <nav class="chapter-pagination" aria-label="Chapter Navigation">
+        {{ with $prevChapter }}
+        <a href="{{ .RelPermalink }}" class="chapter-nav-card prev">
+          <span class="chapter-nav-label"><i class="bi bi-arrow-left"></i> Previous Chapter</span>
+          <span class="chapter-nav-title">{{ .Title }}</span>
+        </a>
+        {{ else }}
+        <a href="{{ $book.RelPermalink }}" class="chapter-nav-card prev">
+          <span class="chapter-nav-label"><i class="bi bi-arrow-left"></i> Monograph Overview</span>
+          <span class="chapter-nav-title">{{ $book.Title }}</span>
+        </a>
+        {{ end }}
+
+        {{ with $nextChapter }}
+        <a href="{{ .RelPermalink }}" class="chapter-nav-card next">
+          <span class="chapter-nav-label">Next Chapter <i class="bi bi-arrow-right"></i></span>
+          <span class="chapter-nav-title">{{ .Title }}</span>
+        </a>
+        {{ else }}
+        <a href="/books/" class="chapter-nav-card next">
+          <span class="chapter-nav-label">Completed Monograph <i class="bi bi-check2-circle"></i></span>
+          <span class="chapter-nav-title">Explore More Books in the Library</span>
+        </a>
+        {{ end }}
+      </nav>
+    </div>
+  </article>
+</div>
+{{ end }}

@@ -1,22 +1,12 @@
-baseURL = 'https://mathcode.com'
+baseURL = 'https://mathcode.org'
 languageCode = 'en-us'
-title = 'Beta.PyjamaCafe'
+title = 'Math Code Center'
 theme = 'mathcode'
 
 [params]
-  author = 'Typobrahe Education LLP'
-  description = 'A coding platform for mathematics with code.'
+  author = 'Math Code Center'
+  description = 'A platform for pure and applied mathematics, formal proofs in Lean 4, and scientific computing.'
   mobileBreakpoint = 1279
-  maxSessions = 1
-  allowAuthModalClose = true
-
-  [params.firebase]
-    apiKey = 'AIzaSyC3rYp82RGSZVJrHwq-WrGX-UUgBneAcDo'
-    authDomain = 'code-pyjamacafe.firebaseapp.com'
-    projectId = 'code-pyjamacafe'
-    storageBucket = 'code-pyjamacafe.firebasestorage.app'
-    messagingSenderId = '135975925947'
-    appId = '1:135975925947:web:dbd0d52a358dfc031c919e'
 
 [markup]
   [markup.goldmark]
@@ -25,9 +15,15 @@ theme = 'mathcode'
     [markup.goldmark.parser]
       [markup.goldmark.parser.attribute]
         block = true
+    [markup.goldmark.extensions]
+      [markup.goldmark.extensions.passthrough]
+        enable = true
+        [markup.goldmark.extensions.passthrough.delimiters]
+          block = [['$$', '$$'], ['\[', '\]']]
+          inline = [['$', '$'], ['\(', '\)']]
 
   [markup.highlight]
-    style = 'github'
+    style = 'github-dark'
     noClasses = true
     codeFences = true
 
