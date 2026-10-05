@@ -4,6 +4,7 @@
 
 Designed for zero-backend deployment on **GitHub Pages** and **GitLab Pages**, all interactive features—including KaTeX math rendering, Lean 4 / multi-language syntax highlighting, Global Quick Search (`Ctrl+K`), automatic "On This Page" section outlines, and interactive self-check quizzes—run instantaneously in the browser.
 
+Note
 ---
 
 ## Navigation & Reader Features
