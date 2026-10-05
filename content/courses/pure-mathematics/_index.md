@@ -5,6 +5,7 @@ domain = 'Pure Mathematics'
 level = 'Intermediate'
 date = '2026-10-04'
 topic_weight = 2
+cover = '/images/course_pure_mathematics.jpg'
 +++
 
 ## Course Overview

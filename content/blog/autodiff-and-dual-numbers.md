@@ -4,6 +4,7 @@ date = '2026-10-01'
 domain = 'Algorithms & Code'
 author = 'Math Code Center Research'
 description = 'Deriving exact machine-precision derivatives without finite-difference truncation error using the commutative ring of dual numbers.'
+cover = '/images/article_symplectic_geometry.jpg'
 +++
 
 Numerical finite differences approximate $f'(x) \approx \frac{f(x+h)-f(x)}{h}$, suffering from subtractive cancellation as $h \to 0$. **Forward-mode automatic differentiation** eliminates truncation error altogether by lifting real arithmetic into the commutative ring of **dual numbers**:

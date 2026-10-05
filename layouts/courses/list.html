@@ -1,6 +1,6 @@
 {{ define "main" }}
 {{ if eq .RelPermalink "/courses/" }}
-  {{/* Top-level Courses Catalog (/courses/) */}}
+  {{/* Top-level Courses Catalog (/courses/) — 3-Column Book-Style Cover Cards */}}
   {{ $courses := slice }}
   {{ range site.Pages }}
     {{ if and (eq .Section "courses") (eq .Kind "section") .File (ne .RelPermalink "/courses/") }}
@@ -20,68 +20,67 @@
         <div class="library-controls-bar" id="coursesFilterBar">
           <div class="library-search-wrap">
             <i class="bi bi-search library-search-icon"></i>
-            <input type="search" id="coursesSearchInput" class="library-search-input" placeholder="Search courses, modules, or lessons (e.g. Lean 4, Spectral, Symplectic)..." autocomplete="off">
+            <input type="search" id="coursesSearchInput" class="library-search-input" placeholder="Search courses, modules, theorems, or languages (e.g. Lean 4, Spectral, Symplectic, C)..." autocomplete="off">
           </div>
           <div class="filter-segment-group" role="group" aria-label="Filter courses by domain">
-            <button type="button" class="filter-seg-btn active" data-course-domain="all">All Domains</button>
+            <button type="button" class="filter-seg-btn active" data-course-domain="all">All Tracks ({{ len $courses }})</button>
             <button type="button" class="filter-seg-btn" data-course-domain="Formal Proofs & Lean 4">Lean 4 &amp; Proofs</button>
             <button type="button" class="filter-seg-btn" data-course-domain="Pure Math">Pure Math</button>
             <button type="button" class="filter-seg-btn" data-course-domain="Applied Math">Applied Math</button>
           </div>
         </div>
+
+        <div class="library-status-bar">
+          <span id="coursesResultCount">Showing all {{ len $courses }} course tracks</span>
+          <button type="button" id="coursesResetBtn" class="library-reset-link d-none">Reset filters</button>
+        </div>
       </header>
 
-      <div class="books-showcase-list" id="coursesCatalogList">
-        {{ range $courses }}
-          {{ $courseDir := .File.Dir }}
+      <div class="catalog-grid-3" id="coursesCatalogList">
+        {{ range $cIdx, $c := $courses }}
+          {{ $courseDir := $c.File.Dir }}
           {{ $lessons := slice }}
           {{ range where site.RegularPages "Section" "courses" }}
             {{ if strings.HasPrefix .File.Dir $courseDir }}
               {{ $lessons = $lessons | append . }}
             {{ end }}
           {{ end }}
-          <article class="book-showcase-card course-catalog-card" data-domain="{{ .Params.domain | default "Mathematics & Code" }}" data-search="{{ lower .Title }} {{ lower (.Params.description | default "") }}">
-            <div class="book-showcase-body" style="grid-column: 1 / -1;">
+          <article class="studio-book-card course-catalog-card" data-domain="{{ $c.Params.domain | default "Mathematics & Code" }}" data-search="{{ lower $c.Title }} {{ lower ($c.Params.description | default "") }}">
+            <a href="{{ $c.RelPermalink }}" class="book-cover-link">
+              <img src="{{ $c.Params.cover | default "/images/course_lean4_proofs.jpg" }}" alt="{{ $c.Title }}" class="book-cover-img" loading="lazy" referrerpolicy="no-referrer">
+            </a>
+            <div class="book-card-body">
               <div class="card-meta-line">
-                <span class="meta-type-course">COURSE TRACK</span>
+                <span class="meta-type-course">COURSE 0{{ add $cIdx 1 }}</span>
                 <span class="meta-dot">&middot;</span>
-                <span>{{ .Params.domain | default "Mathematics & Code" }}</span>
-                <span class="meta-dot">&middot;</span>
-                <span>{{ .Params.level | default "Advanced Undergraduate" }}</span>
+                <span>{{ $c.Params.domain | default "Mathematics & Code" }}</span>
                 <span class="meta-dot">&middot;</span>
                 <span>{{ len $lessons }} Lessons</span>
               </div>
-              <h2 class="book-showcase-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
-              <p class="book-showcase-desc">{{ .Params.description }}</p>
 
-              <div class="book-toc-preview">
-                <div class="toc-preview-heading">Curriculum Lessons</div>
-                <div class="toc-preview-grid">
-                  {{ range $idx, $l := $lessons }}
-                  <a href="{{ $l.RelPermalink }}" class="toc-chapter-row" data-lesson-id="{{ $l.File.ContentBaseName }}">
-                    <span class="toc-ch-num">{{ printf "%02d" (add $idx 1) }}</span>
-                    <span class="toc-ch-title">{{ $l.Title }}</span>
-                    <span class="toc-ch-meta">{{ upper ($l.Params.language | default "lean") }}</span>
-                    <i class="bi bi-arrow-right toc-ch-arrow"></i>
-                  </a>
-                  {{ end }}
-                </div>
-              </div>
+              <h2 class="card-title"><a href="{{ $c.RelPermalink }}">{{ $c.Title }}</a></h2>
+              <p class="card-excerpt">{{ $c.Params.description }}</p>
 
-              <div class="book-showcase-actions">
+              <div class="card-footer-row course-card-footer">
                 {{ if gt (len $lessons) 0 }}
                   {{ $first := index $lessons 0 }}
-                  <a href="{{ $first.RelPermalink }}" class="btn-studio-primary">
-                    <i class="bi bi-play-fill"></i> Start First Lesson
+                  <a href="{{ $first.RelPermalink }}" class="btn-studio-primary course-card-start-btn">
+                    <i class="bi bi-play-fill"></i> Start Course
                   </a>
                 {{ end }}
-                <a href="{{ .RelPermalink }}" class="btn-studio-secondary">
-                  Course Syllabus &amp; Overview
+                <a href="{{ $c.RelPermalink }}" class="card-action-link">
+                  Syllabus <i class="bi bi-arrow-up-right"></i>
                 </a>
               </div>
             </div>
           </article>
         {{ end }}
+      </div>
+
+      <div id="coursesEmptyState" class="library-empty-state d-none">
+        <h3>No matching courses found</h3>
+        <p>Try clearing your search query or switching to "All Tracks".</p>
+        <button type="button" class="btn-studio-secondary" id="coursesEmptyResetBtn">Show All Courses</button>
       </div>
     </div>
   </div>

@@ -5,6 +5,7 @@ domain = 'Lean 4 & Proofs'
 level = 'Intermediate'
 date = '2026-10-04'
 topic_weight = 1
+cover = '/images/course_lean4_proofs.jpg'
 +++
 
 ## Course Overview

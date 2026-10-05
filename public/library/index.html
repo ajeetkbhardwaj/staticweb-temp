@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en-us" data-bs-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library | Math Code Center</title>
+  <meta name="description" content="Unified catalog of courses, mathematical monographs, Lean 4 formalizations, and research articles at Math Code Center.">
+  <meta property="og:title" content="Library">
+  <meta property="og:description" content="Unified catalog of courses, mathematical monographs, Lean 4 formalizations, and research articles at Math Code Center.">
+  <meta property="og:image" content="https://mathcode.org/og.png">
+  <meta property="og:url" content="https://mathcode.org/library/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Math Code Center">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Library">
+  <meta name="twitter:description" content="Unified catalog of courses, mathematical monographs, Lean 4 formalizations, and research articles at Math Code Center.">
+  <meta name="twitter:image" content="https://mathcode.org/og.png">
+  <link rel="icon" type="image/png" href="/pc.png">
+  <script>
+    (function() {
+      try {
+        var savedTheme = localStorage.getItem('mathcode-theme') || 'dark';
+        document.documentElement.setAttribute('data-bs-theme', savedTheme);
+      } catch (e) {
+        document.documentElement.setAttribute('data-bs-theme', 'dark');
+      }
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=JetBrains+Mono:ital,wght@0,400..700;1,400..600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>
+  window.__APP_CONFIG__ = {
+    mobileBreakpoint: 1279
+  };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
+  <link rel="stylesheet" href="/css/main.css">
+  <script src="/js/main.js" defer></script>
+</head>
+<body>
+  <script id="global-search-index" type="application/json">[{"category":"course","typeLabel":"COURSE","title":"Formal Proofs & Type Theory in Lean 4","subtitle":"2 lessons · Intermediate","domain":"Lean 4 & Proofs","url":"/courses/lean4-formal-proofs/"},{"category":"course","typeLabel":"COURSE","title":"Pure Mathematics: Algebra, Analysis & Number Theory","subtitle":"2 lessons · Intermediate","domain":"Pure Mathematics","url":"/courses/pure-mathematics/"},{"category":"course","typeLabel":"COURSE","title":"Applied Mathematics & Scientific Computing","subtitle":"2 lessons · Advanced","domain":"Applied Mathematics","url":"/courses/applied-scientific-computing/"},{"category":"course","typeLabel":"LESSON","title":"Propositions as Types & Curry–Howard","subtitle":"Formal Proofs & Type Theory in Lean 4 (Foundations)","domain":"Lean 4 & Proofs","url":"/courses/lean4-formal-proofs/foundations/propositions-as-types/"},{"category":"course","typeLabel":"LESSON","title":"Structural Induction & Algebraic Monoids","subtitle":"Formal Proofs & Type Theory in Lean 4 (Foundations)","domain":"Lean 4 & Proofs","url":"/courses/lean4-formal-proofs/foundations/induction-and-algebraic-structures/"},{"category":"course","typeLabel":"LESSON","title":"Modular Arithmetic & Euler Totient Theorem","subtitle":"Pure Mathematics: Algebra, Analysis & Number Theory (Number Theory)","domain":"Pure Mathematics","url":"/courses/pure-mathematics/number-theory/modular-arithmetic-and-fermat/"},{"category":"course","typeLabel":"LESSON","title":"The Spectral Theorem & Singular Value Decomposition","subtitle":"Pure Mathematics: Algebra, Analysis & Number Theory (Linear Algebra)","domain":"Pure Mathematics","url":"/courses/pure-mathematics/linear-algebra/svd-and-spectral-theorem/"},{"category":"course","typeLabel":"LESSON","title":"Newton–Raphson Convergence & Convex Optimization","subtitle":"Applied Mathematics & Scientific Computing (Numerical Analysis)","domain":"Applied Mathematics","url":"/courses/applied-scientific-computing/numerical-analysis/newton-krylov-and-optimization/"},{"category":"course","typeLabel":"LESSON","title":"Symplectic Integrators & Hamiltonian Mechanics","subtitle":"Applied Mathematics & Scientific Computing (Differential Equations)","domain":"Applied Mathematics","url":"/courses/applied-scientific-computing/differential-equations/symplectic-integrators-and-ode/"},{"category":"book","typeLabel":"BOOK","title":"Theorem Proving & Formal Mathematics in Lean 4","subtitle":"3 chapters · Intermediate to Advanced","domain":"Lean 4 & Proofs","url":"/books/theorem-proving-in-lean4/"},{"category":"book","typeLabel":"CH. 1","title":"Chapter 1: Dependent Type Theory & Universes","subtitle":"Theorem Proving & Formal Mathematics in Lean 4","domain":"Lean 4 & Proofs","url":"/books/theorem-proving-in-lean4/chapter-1-dependent-type-theory/"},{"category":"book","typeLabel":"CH. 2","title":"Chapter 2: Equational Reasoning, Induction & Tactics","subtitle":"Theorem Proving & Formal Mathematics in Lean 4","domain":"Lean 4 & Proofs","url":"/books/theorem-proving-in-lean4/chapter-2-tactics-and-equality/"},{"category":"book","typeLabel":"CH. 3","title":"Chapter 3: Typeclasses, Rings & Mathlib Hierarchies","subtitle":"Theorem Proving & Formal Mathematics in Lean 4","domain":"Lean 4 & Proofs","url":"/books/theorem-proving-in-lean4/chapter-3-algebraic-hierarchies/"},{"category":"book","typeLabel":"BOOK","title":"Linear Algebra, Spectral Methods & Matrix Computation","subtitle":"2 chapters · Undergraduate to Graduate","domain":"Applied Math","url":"/books/linear-algebra-and-spectral-methods/"},{"category":"book","typeLabel":"CH. 1","title":"Chapter 1: Inner Product Spaces & Orthogonal Projections","subtitle":"Linear Algebra, Spectral Methods & Matrix Computation","domain":"Applied Math","url":"/books/linear-algebra-and-spectral-methods/chapter-1-inner-product-spaces/"},{"category":"book","typeLabel":"CH. 2","title":"Chapter 2: The Spectral Theorem & Rayleigh Quotients","subtitle":"Linear Algebra, Spectral Methods & Matrix Computation","domain":"Applied Math","url":"/books/linear-algebra-and-spectral-methods/chapter-2-spectral-theorem/"},{"category":"book","typeLabel":"BOOK","title":"Real & Functional Analysis for Computational Scientists","subtitle":"2 chapters · Advanced Undergraduate to Graduate","domain":"Pure Math","url":"/books/real-and-functional-analysis/"},{"category":"book","typeLabel":"CH. 1","title":"Chapter 1: Complete Metric Spaces & Contraction Mappings","subtitle":"Real & Functional Analysis for Computational Scientists","domain":"Pure Math","url":"/books/real-and-functional-analysis/chapter-1-metric-spaces-and-contractions/"},{"category":"book","typeLabel":"CH. 2","title":"Chapter 2: Hilbert Spaces, Riesz Representation & Lax-Milgram","subtitle":"Real & Functional Analysis for Computational Scientists","domain":"Pure Math","url":"/books/real-and-functional-analysis/chapter-2-hilbert-spaces-and-riesz/"},{"category":"article","typeLabel":"ESSAY","title":"Welcome to Math Code Center: Where Formal Proofs Meet Computation","subtitle":"2 min read · Oct 4, 2026","domain":"Pure & Applied Mathematics","url":"/blog/welcome-to-mathcode/"},{"category":"article","typeLabel":"ESSAY","title":"From Pen-and-Paper Proofs to Lean 4: Curry–Howard in Practice","subtitle":"3 min read · Oct 3, 2026","domain":"Lean 4 & Proofs","url":"/blog/constructive-proofs-in-lean4/"},{"category":"article","typeLabel":"ESSAY","title":"Spectral Graph Theory, Cheeger Inequality & Laplacian Eigenvalues","subtitle":"2 min read · Oct 2, 2026","domain":"Applied Mathematics","url":"/blog/spectral-graph-theory-and-laplacians/"},{"category":"article","typeLabel":"ESSAY","title":"Forward-Mode Automatic Differentiation via the Algebra of Dual Numbers","subtitle":"2 min read · Oct 1, 2026","domain":"Algorithms & Code","url":"/blog/autodiff-and-dual-numbers/"}]</script>
+  <header class="topbar">
+    <div class="topbar-zone topbar-left">
+      <button id="sidebarToggleBtn" class="topbar-icon-btn d-none" type="button" aria-label="Toggle Curriculum Drawer" title="Toggle Sidebar">
+        <i class="bi bi-layout-sidebar-inset"></i>
+      </button>
+      <a href="/" class="brand-link" aria-label="Math Code Center Home">
+        <span class="brand-glyph" aria-hidden="true">&sum;</span>
+        <span class="brand-text">Math Code Center</span>
+      </a>
+    </div>
+
+    <nav class="topbar-zone topbar-center" id="primaryNav" aria-label="Primary Navigation">
+      <a href="/library/" class="topnav-link active">Library</a>
+      <a href="/courses/" class="topnav-link">Courses</a>
+      <a href="/books/" class="topnav-link">Books</a>
+      <a href="/blog/" class="topnav-link">Blog</a>
+    </nav>
+
+    <div class="topbar-zone topbar-right">
+      <button id="globalSearchBtn" class="topbar-search-trigger" type="button" aria-label="Quick Search across all courses, books, and articles" title="Quick Search (Ctrl+K or /)">
+        <i class="bi bi-search"></i>
+        <span class="topbar-search-label">Search...</span>
+        <kbd class="topbar-search-kbd">Ctrl K</kbd>
+      </button>
+      <button id="themeToggleBtn" class="topbar-icon-btn" type="button" aria-label="Toggle dark and light theme" title="Toggle theme (Dark / Light)">
+        <i class="bi bi-sun" id="themeToggleIcon"></i>
+      </button>
+      <button id="mobileNavToggleBtn" class="topbar-icon-btn d-md-none" type="button" aria-label="Toggle Navigation Menu" title="Menu">
+        <i class="bi bi-list"></i>
+      </button>
+    </div>
+  </header>
+
+  <nav id="mobileNavDrawer" class="mobile-nav-drawer d-none" aria-label="Mobile Navigation">
+    <a href="/library/" class="mobile-nav-link active"><i class="bi bi-collection"></i> Unified Library</a>
+    <a href="/courses/" class="mobile-nav-link"><i class="bi bi-easel2"></i> Interactive Courses</a>
+    <a href="/books/" class="mobile-nav-link"><i class="bi bi-journal-bookmark"></i> Mathematical Monographs</a>
+    <a href="/blog/" class="mobile-nav-link"><i class="bi bi-pen"></i> Research Essays &amp; Blog</a>
+  </nav>
+
+  <div id="globalSearchModal" class="search-modal-backdrop d-none" role="dialog" aria-modal="true" aria-label="Global Catalog Search">
+    <div class="search-modal-dialog">
+      <div class="search-modal-header">
+        <i class="bi bi-search search-modal-icon"></i>
+        <input type="search" id="globalSearchInput" class="search-modal-input" placeholder="Jump to any course, lesson, book chapter, theorem, or essay..." autocomplete="off">
+        <button type="button" id="globalSearchCloseBtn" class="topbar-icon-btn" aria-label="Close search"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <div class="search-modal-filters" role="group" aria-label="Filter search results by type">
+        <button type="button" class="filter-seg-btn active" data-search-type="all">All</button>
+        <button type="button" class="filter-seg-btn" data-search-type="course">Courses &amp; Lessons</button>
+        <button type="button" class="filter-seg-btn" data-search-type="book">Books &amp; Chapters</button>
+        <button type="button" class="filter-seg-btn" data-search-type="article">Blog Essays</button>
+      </div>
+      <div id="globalSearchResults" class="search-modal-results"></div>
+      <div class="search-modal-footer">
+        <span><kbd>&uarr;</kbd> <kbd>&darr;</kbd> to navigate</span>
+        <span><kbd>Enter</kbd> to open</span>
+        <span><kbd>Esc</kbd> to close</span>
+      </div>
+    </div>
+  </div>
+
+  <main style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+    
+<div class="studio-scroll-page">
+  <div class="studio-container">
+    <header class="page-studio-header">
+      <div class="studio-eyebrow">UNIFIED INDEX &middot; COURSES, MONOGRAPHS, LESSONS &amp; ARTICLES</div>
+      <h1 class="page-studio-title">Math Code Center Library</h1>
+      <p class="page-studio-subtitle">
+        Browse, search, and filter all 16 learning resources across Pure Mathematics, Applied Scientific Computing, and Formal Proofs in Lean 4.
+      </p>
+
+      <div class="library-controls-bar" id="libraryControls">
+        <div class="library-search-wrap">
+          <i class="bi bi-search library-search-icon"></i>
+          <input type="search" id="librarySearchInput" class="library-search-input" placeholder="Search by theorem, topic, language (Lean 4, Python, C, Spectral, Galois)..." autocomplete="off">
+        </div>
+
+        <div class="library-filter-groups">
+          <div class="filter-segment-group" role="group" aria-label="Filter by content type">
+            <button type="button" class="filter-seg-btn active" data-filter-type="all">All (16)</button>
+            <button type="button" class="filter-seg-btn" data-filter-type="course">Courses (3)</button>
+            <button type="button" class="filter-seg-btn" data-filter-type="lesson">Lessons (6)</button>
+            <button type="button" class="filter-seg-btn" data-filter-type="book">Books (3)</button>
+            <button type="button" class="filter-seg-btn" data-filter-type="article">Articles (4)</button>
+          </div>
+
+          <div class="filter-segment-group" role="group" aria-label="Filter by mathematical domain">
+            <button type="button" class="filter-seg-btn active" data-filter-domain="all">All Domains</button>
+            <button type="button" class="filter-seg-btn" data-filter-domain="Formal Proofs & Lean 4">Lean 4 &amp; Proofs</button>
+            <button type="button" class="filter-seg-btn" data-filter-domain="Pure Math">Pure Math</button>
+            <button type="button" class="filter-seg-btn" data-filter-domain="Applied Math">Applied Math</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="library-status-bar">
+        <span id="libraryResultCount">Showing all 16 resources</span>
+        <button type="button" id="libraryResetBtn" class="library-reset-link d-none">Reset filters</button>
+      </div>
+    </header>
+
+    <div class="catalog-grid-3" id="libraryCatalogGrid">
+      
+      <article class="studio-card library-item-card" data-type="course" data-domain="Lean 4 &amp; Proofs" data-search="formal proofs &amp; type theory in lean 4 master constructive logic, dependent type theory, tactic-driven theorem proving, and algebraic hierarchies in lean 4. lean 4 &amp; proofs course">
+        <div class="card-meta-line">
+          <span class="meta-type-course">COURSE</span>
+          <span class="meta-dot">&middot;</span>
+          <span>Lean 4 &amp; Proofs</span>
+          <span class="meta-dot">&middot;</span>
+          <span>2 Lessons</span>
+        </div>
+        <h2 class="card-title"><a href="/courses/lean4-formal-proofs/">Formal Proofs &amp; Type Theory in Lean 4</a></h2>
+        <p class="card-excerpt">Master constructive logic, dependent type theory, tactic-driven theorem proving, and algebraic hierarchies in Lean 4.</p>
+        <div class="card-chapter-links">
+          <a href="/courses/lean4-formal-proofs/foundations/propositions-as-types/" class="chapter-mini-link"><i class="bi bi-terminal"></i> Propositions as Types &amp; Curry–Howard</a><a href="/courses/lean4-formal-proofs/foundations/induction-and-algebraic-structures/" class="chapter-mini-link"><i class="bi bi-terminal"></i> Structural Induction &amp; Algebraic Monoids</a>
+        </div>
+        <div class="card-footer-row">
+          <a href="/courses/lean4-formal-proofs/" class="card-action-link">Open Course <i class="bi bi-arrow-up-right"></i></a>
+        </div>
+      </article>
+      <article class="studio-card library-item-card" data-type="course" data-domain="Pure Mathematics" data-search="pure mathematics: algebra, analysis &amp; number theory rigorous foundations of number theory, group actions, real analysis, and spectral linear algebra paired with formal proofs and algorithms. pure mathematics course">
+        <div class="card-meta-line">
+          <span class="meta-type-course">COURSE</span>
+          <span class="meta-dot">&middot;</span>
+          <span>Pure Mathematics</span>
+          <span class="meta-dot">&middot;</span>
+          <span>2 Lessons</span>
+        </div>
+        <h2 class="card-title"><a href="/courses/pure-mathematics/">Pure Mathematics: Algebra, Analysis &amp; Number Theory</a></h2>
+        <p class="card-excerpt">Rigorous foundations of number theory, group actions, real analysis, and spectral linear algebra paired with formal proofs and algorithms.</p>
+        <div class="card-chapter-links">
+          <a href="/courses/pure-mathematics/number-theory/modular-arithmetic-and-fermat/" class="chapter-mini-link"><i class="bi bi-terminal"></i> Modular Arithmetic &amp; Euler Totient Theorem</a><a href="/courses/pure-mathematics/linear-algebra/svd-and-spectral-theorem/" class="chapter-mini-link"><i class="bi bi-terminal"></i> The Spectral Theorem &amp; Singular Value Decomposition</a>
+        </div>
+        <div class="card-footer-row">
+          <a href="/courses/pure-mathematics/" class="card-action-link">Open Course <i class="bi bi-arrow-up-right"></i></a>
+        </div>
+      </article>
+      <article class="studio-card library-item-card" data-type="course" data-domain="Applied Mathematics" data-search="applied mathematics &amp; scientific computing numerical analysis, convex optimization, newton-krylov solvers, and structure-preserving symplectic ode integrators. applied mathematics course">
+        <div class="card-meta-line">
+          <span class="meta-type-course">COURSE</span>
+          <span class="meta-dot">&middot;</span>
+          <span>Applied Mathematics</span>
+          <span class="meta-dot">&middot;</span>
+          <span>2 Lessons</span>
+        </div>
+        <h2 class="card-title"><a href="/courses/applied-scientific-computing/">Applied Mathematics &amp; Scientific Computing</a></h2>
+        <p class="card-excerpt">Numerical analysis, convex optimization, Newton-Krylov solvers, and structure-preserving symplectic ODE integrators.</p>
+        <div class="card-chapter-links">
+          <a href="/courses/applied-scientific-computing/numerical-analysis/newton-krylov-and-optimization/" class="chapter-mini-link"><i class="bi bi-terminal"></i> Newton–Raphson Convergence &amp; Convex Optimization</a><a href="/courses/applied-scientific-computing/differential-equations/symplectic-integrators-and-ode/" class="chapter-mini-link"><i class="bi bi-terminal"></i> Symplectic Integrators &amp; Hamiltonian Mechanics</a>
+        </div>
+        <div class="card-footer-row">
+          <a href="/courses/applied-scientific-computing/" class="card-action-link">Open Course <i class="bi bi-arrow-up-right"></i></a>
+        </div>
+      </article>
+
+      
+      <article class="studio-card library-item-card" data-type="book" data-domain="Lean 4 &amp; Proofs" data-search="theorem proving &amp; formal mathematics in lean 4 a self-contained monograph on formalizing pure mathematics, algebraic structures, and inductive proofs in lean 4. lean 4 &amp; proofs book monograph">
+        <div class="card-meta-line">
+          <span class="meta-type-book">BOOK</span>
+          <span class="meta-dot">&middot;</span>
+          <span>Lean 4 &amp; Proofs</span>
+          <span class="meta-dot">&middot;</span>
+          <span>3 Chapters</span>
+        </div>
+        <h2 class="card-title"><a href="/books/theorem-proving-in-lean4/">Theorem Proving &amp; Formal Mathematics in Lean 4</a></h2>
+        <p class="card-excerpt">A self-contained monograph on formalizing pure mathematics, algebraic structures, and inductive proofs in Lean 4.</p>
+        <div class="card-chapter-links">
+          <a href="/books/theorem-proving-in-lean4/chapter-1-dependent-type-theory/" class="chapter-mini-link"><i class="bi bi-journal-text"></i> Chapter 1: Dependent Type Theory &amp; Universes</a><a href="/books/theorem-proving-in-lean4/chapter-2-tactics-and-equality/" class="chapter-mini-link"><i class="bi bi-journal-text"></i> Chapter 2: Equational Reasoning, Induction &amp; Tactics</a><a href="/books/theorem-proving-in-lean4/chapter-3-algebraic-hierarchies/" class="chapter-mini-link"><i class="bi bi-journal-text"></i> Chapter 3: Typeclasses, Rings &amp; Mathlib Hierarchies</a>
+        </div>
+        <div class="card-footer-row">
+          <a href="/books/theorem-proving-in-lean4/" class="card-action-link">Read Monograph <i class="bi bi-arrow-right"></i></a>
+        </div>
+      </article>
+      <article class="studio-card library-item-card" data-type="book" data-domain="Applied Math" data-search="linear algebra, spectral methods &amp; matrix computation an algorithmic and geometric treatment of vector spaces, spectral decompositions, krylov subspaces, and numerical stability. applied math book monograph">
+        <div class="card-meta-line">
+          <span class="meta-type-book">BOOK</span>
+          <span class="meta-dot">&middot;</span>
+          <span>Applied Math</span>
+          <span class="meta-dot">&middot;</span>
+          <span>2 Chapters</span>
+        </div>
+        <h2 class="card-title"><a href="/books/linear-algebra-and-spectral-methods/">Linear Algebra, Spectral Methods &amp; Matrix Computation</a></h2>
+        <p class="card-excerpt">An algorithmic and geometric treatment of vector spaces, spectral decompositions, Krylov subspaces, and numerical stability.</p>
+        <div class="card-chapter-links">
+          <a href="/books/linear-algebra-and-spectral-methods/chapter-1-inner-product-spaces/" class="chapter-mini-link"><i class="bi bi-journal-text"></i> Chapter 1: Inner Product Spaces &amp; Orthogonal Projections</a><a href="/books/linear-algebra-and-spectral-methods/chapter-2-spectral-theorem/" class="chapter-mini-link"><i class="bi bi-journal-text"></i> Chapter 2: The Spectral Theorem &amp; Rayleigh Quotients</a>
+        </div>
+        <div class="card-footer-row">
+          <a href="/books/linear-algebra-and-spectral-methods/" class="card-action-link">Read Monograph <i class="bi bi-arrow-right"></i></a>
+        </div>
+      </article>
+      <article class="studio-card library-item-card" data-type="book" data-domain="Pure Math" data-search="real &amp; functional analysis for computational scientists rigorous foundations of infinite-dimensional analysis, contraction mappings, lebesgue integration, and weak derivatives. pure math book monograph">
+        <div class="card-meta-line">
+          <span class="meta-type-book">BOOK</span>
+          <span class="meta-dot">&middot;</span>
+          <span>Pure Math</span>
+          <span class="meta-dot">&middot;</span>
+          <span>2 Chapters</span>
+        </div>
+        <h2 class="card-title"><a href="/books/real-and-functional-analysis/">Real &amp; Functional Analysis for Computational Scientists</a></h2>
+        <p class="card-excerpt">Rigorous foundations of infinite-dimensional analysis, contraction mappings, Lebesgue integration, and weak derivatives.</p>
+        <div class="card-chapter-links">
+          <a href="/books/real-and-functional-analysis/chapter-1-metric-spaces-and-contractions/" class="chapter-mini-link"><i class="bi bi-journal-text"></i> Chapter 1: Complete Metric Spaces &amp; Contraction Mappings</a><a href="/books/real-and-functional-analysis/chapter-2-hilbert-spaces-and-riesz/" class="chapter-mini-link"><i class="bi bi-journal-text"></i> Chapter 2: Hilbert Spaces, Riesz Representation &amp; Lax-Milgram</a>
+        </div>
+        <div class="card-footer-row">
+          <a href="/books/real-and-functional-analysis/" class="card-action-link">Read Monograph <i class="bi bi-arrow-right"></i></a>
+        </div>
+      </article>
+
+      
+      <article class="studio-card library-item-card" data-type="lesson" data-domain="Lean 4 &amp; Proofs" data-search="propositions as types &amp; curry–howard formalizing the curry–howard correspondence, constructive implication, and proof irrelevance in lean 4. lean formal proofs &amp; type theory in lean 4 lesson">
+        <div class="card-meta-line">
+          <span class="meta-type-lesson">LESSON</span>
+          <span class="meta-dot">&middot;</span>
+          <span>Lean 4 &amp; Proofs</span>
+          <span class="meta-dot">&middot;</span>
+          <span>LEAN 4</span>
+        </div>
+        <h2 class="card-title"><a href="/courses/lean4-formal-proofs/foundations/propositions-as-types/">Propositions as Types &amp; Curry–Howard</a></h2>
+        <p class="card-excerpt">Formalizing the Curry–Howard correspondence, constructive implication, and proof irrelevance in Lean 4.</p>
+        <div class="card-footer-row">
+          <a href="/courses/lean4-formal-proofs/foundations/propositions-as-types/" class="card-action-link">Launch Lesson <i class="bi bi-arrow-right"></i></a>
+        </div>
+      </article>
+      <article class="studio-card library-item-card" data-type="lesson" data-domain="Lean 4 &amp; Proofs" data-search="structural induction &amp; algebraic monoids structural induction over inductive types, equational reasoning, and monoid typeclass hierarchies in lean 4. lean formal proofs &amp; type theory in lean 4 lesson">
+        <div class="card-meta-line">
+          <span class="meta-type-lesson">LESSON</span>
+          <span class="meta-dot">&middot;</span>
+          <span>Lean 4 &amp; Proofs</span>
+          <span class="meta-dot">&middot;</span>
+          <span>LEAN 4</span>
+        </div>
+        <h2 class="card-title"><a href="/courses/lean4-formal-proofs/foundations/induction-and-algebraic-structures/">Structural Induction &amp; Algebraic Monoids</a></h2>
+        <p class="card-excerpt">Structural induction over inductive types, equational reasoning, and monoid typeclass hierarchies in Lean 4.</p>
+        <div class="card-footer-row">
+          <a href="/courses/lean4-formal-proofs/foundations/induction-and-algebraic-structures/" class="card-action-link">Launch Lesson <i class="bi bi-arrow-right"></i></a>
+        </div>
+      </article>
+      <article class="studio-card library-item-card" data-type="lesson" data-domain="Pure Mathematics" data-search="modular arithmetic &amp; euler totient theorem bézout identity, the extended euclidean algorithm, binary modular exponentiation, and euler–fermat theorems. python pure mathematics: algebra, analysis &amp; number theory lesson">
+        <div class="card-meta-line">
+          <span class="meta-type-lesson">LESSON</span>
+          <span class="meta-dot">&middot;</span>
+          <span>Pure Mathematics</span>
+          <span class="meta-dot">&middot;</span>
+          <span>PYTHON</span>
+        </div>
+        <h2 class="card-title"><a href="/courses/pure-mathematics/number-theory/modular-arithmetic-and-fermat/">Modular Arithmetic &amp; Euler Totient Theorem</a></h2>
+        <p class="card-excerpt">Bézout identity, the Extended Euclidean Algorithm, binary modular exponentiation, and Euler–Fermat theorems.</p>
+        <div class="card-footer-row">
+          <a href="/courses/pure-mathematics/number-theory/modular-arithmetic-and-fermat/" class="card-action-link">Launch Lesson <i class="bi bi-arrow-right"></i></a>
+        </div>
+      </article>
+      <article class="studio-card library-item-card" data-type="lesson" data-domain="Pure Mathematics" data-search="the spectral theorem &amp; singular value decomposition unitary diagonalization of hermitian operators, singular value decomposition, and eckart–young low-rank approximation. python pure mathematics: algebra, analysis &amp; number theory lesson">
+        <div class="card-meta-line">
+          <span class="meta-type-lesson">LESSON</span>
+          <span class="meta-dot">&middot;</span>
+          <span>Pure Mathematics</span>
+          <span class="meta-dot">&middot;</span>
+          <span>PYTHON</span>
+        </div>
+        <h2 class="card-title"><a href="/courses/pure-mathematics/linear-algebra/svd-and-spectral-theorem/">The Spectral Theorem &amp; Singular Value Decomposition</a></h2>
+        <p class="card-excerpt">Unitary diagonalization of Hermitian operators, Singular Value Decomposition, and Eckart–Young low-rank approximation.</p>
+        <div class="card-footer-row">
+          <a href="/courses/pure-mathematics/linear-algebra/svd-and-spectral-theorem/" class="card-action-link">Launch Lesson <i class="bi bi-arrow-right"></i></a>
+        </div>
+      </article>
+      <article class="studio-card library-item-card" data-type="lesson" data-domain="Applied Mathematics" data-search="newton–raphson convergence &amp; convex optimization quadratic convergence of newton–raphson, armijo backtracking line search, and l-smooth convex optimization. c applied mathematics &amp; scientific computing lesson">
+        <div class="card-meta-line">
+          <span class="meta-type-lesson">LESSON</span>
+          <span class="meta-dot">&middot;</span>
+          <span>Applied Mathematics</span>
+          <span class="meta-dot">&middot;</span>
+          <span>C</span>
+        </div>
+        <h2 class="card-title"><a href="/courses/applied-scientific-computing/numerical-analysis/newton-krylov-and-optimization/">Newton–Raphson Convergence &amp; Convex Optimization</a></h2>
+        <p class="card-excerpt">Quadratic convergence of Newton–Raphson, Armijo backtracking line search, and L-smooth convex optimization.</p>
+        <div class="card-footer-row">
+          <a href="/courses/applied-scientific-computing/numerical-analysis/newton-krylov-and-optimization/" class="card-action-link">Launch Lesson <i class="bi bi-arrow-right"></i></a>
+        </div>
+      </article>
+      <article class="studio-card library-item-card" data-type="lesson" data-domain="Applied Mathematics" data-search="symplectic integrators &amp; hamiltonian mechanics hamiltonian phase-space conservation, störmer–verlet symplectic integration, and long-term energy stability. python applied mathematics &amp; scientific computing lesson">
+        <div class="card-meta-line">
+          <span class="meta-type-lesson">LESSON</span>
+          <span class="meta-dot">&middot;</span>
+          <span>Applied Mathematics</span>
+          <span class="meta-dot">&middot;</span>
+          <span>PYTHON</span>
+        </div>
+        <h2 class="card-title"><a href="/courses/applied-scientific-computing/differential-equations/symplectic-integrators-and-ode/">Symplectic Integrators &amp; Hamiltonian Mechanics</a></h2>
+        <p class="card-excerpt">Hamiltonian phase-space conservation, Störmer–Verlet symplectic integration, and long-term energy stability.</p>
+        <div class="card-footer-row">
+          <a href="/courses/applied-scientific-computing/differential-equations/symplectic-integrators-and-ode/" class="card-action-link">Launch Lesson <i class="bi bi-arrow-right"></i></a>
+        </div>
+      </article>
+
+      
+      <article class="studio-card library-item-card" data-type="article" data-domain="Pure &amp; Applied Mathematics" data-search="welcome to math code center: where formal proofs meet computation bridging pure and applied mathematics with formal verification in lean 4 and high-performance scientific computing. pure &amp; applied mathematics article blog">
+        <div class="card-meta-line">
+          <span class="meta-type-article">ARTICLE</span>
+          <span class="meta-dot">&middot;</span>
+          <span>Pure &amp; Applied Mathematics</span>
+          <span class="meta-dot">&middot;</span>
+          <span>2 min read</span>
+        </div>
+        <h2 class="card-title"><a href="/blog/welcome-to-mathcode/">Welcome to Math Code Center: Where Formal Proofs Meet Computation</a></h2>
+        <p class="card-excerpt">Bridging pure and applied mathematics with formal verification in Lean 4 and high-performance scientific computing.</p>
+        <div class="card-footer-row">
+          <a href="/blog/welcome-to-mathcode/" class="card-action-link">Read Article <i class="bi bi-arrow-right"></i></a>
+        </div>
+      </article>
+      <article class="studio-card library-item-card" data-type="article" data-domain="Lean 4 &amp; Proofs" data-search="from pen-and-paper proofs to lean 4: curry–howard in practice how dependent type theory turns logical quantifiers into function types and dependent pairs in lean 4. lean 4 &amp; proofs article blog">
+        <div class="card-meta-line">
+          <span class="meta-type-article">ARTICLE</span>
+          <span class="meta-dot">&middot;</span>
+          <span>Lean 4 &amp; Proofs</span>
+          <span class="meta-dot">&middot;</span>
+          <span>3 min read</span>
+        </div>
+        <h2 class="card-title"><a href="/blog/constructive-proofs-in-lean4/">From Pen-and-Paper Proofs to Lean 4: Curry–Howard in Practice</a></h2>
+        <p class="card-excerpt">How dependent type theory turns logical quantifiers into function types and dependent pairs in Lean 4.</p>
+        <div class="card-footer-row">
+          <a href="/blog/constructive-proofs-in-lean4/" class="card-action-link">Read Article <i class="bi bi-arrow-right"></i></a>
+        </div>
+      </article>
+      <article class="studio-card library-item-card" data-type="article" data-domain="Applied Mathematics" data-search="spectral graph theory, cheeger inequality &amp; laplacian eigenvalues connecting the algebraic connectivity eigenvalue of the graph laplacian to optimal network partitioning and spectral clustering. applied mathematics article blog">
+        <div class="card-meta-line">
+          <span class="meta-type-article">ARTICLE</span>
+          <span class="meta-dot">&middot;</span>
+          <span>Applied Mathematics</span>
+          <span class="meta-dot">&middot;</span>
+          <span>2 min read</span>
+        </div>
+        <h2 class="card-title"><a href="/blog/spectral-graph-theory-and-laplacians/">Spectral Graph Theory, Cheeger Inequality &amp; Laplacian Eigenvalues</a></h2>
+        <p class="card-excerpt">Connecting the algebraic connectivity eigenvalue of the graph Laplacian to optimal network partitioning and spectral clustering.</p>
+        <div class="card-footer-row">
+          <a href="/blog/spectral-graph-theory-and-laplacians/" class="card-action-link">Read Article <i class="bi bi-arrow-right"></i></a>
+        </div>
+      </article>
+      <article class="studio-card library-item-card" data-type="article" data-domain="Algorithms &amp; Code" data-search="forward-mode automatic differentiation via the algebra of dual numbers deriving exact machine-precision derivatives without finite-difference truncation error using the commutative ring of dual numbers. algorithms &amp; code article blog">
+        <div class="card-meta-line">
+          <span class="meta-type-article">ARTICLE</span>
+          <span class="meta-dot">&middot;</span>
+          <span>Algorithms &amp; Code</span>
+          <span class="meta-dot">&middot;</span>
+          <span>2 min read</span>
+        </div>
+        <h2 class="card-title"><a href="/blog/autodiff-and-dual-numbers/">Forward-Mode Automatic Differentiation via the Algebra of Dual Numbers</a></h2>
+        <p class="card-excerpt">Deriving exact machine-precision derivatives without finite-difference truncation error using the commutative ring of dual numbers.</p>
+        <div class="card-footer-row">
+          <a href="/blog/autodiff-and-dual-numbers/" class="card-action-link">Read Article <i class="bi bi-arrow-right"></i></a>
+        </div>
+      </article>
+    </div>
+
+    <div id="libraryEmptyState" class="library-empty-state d-none">
+      <h3>No matching mathematical or code resources found</h3>
+      <p>Try clearing your search query or switching to "All Domains".</p>
+      <button type="button" class="btn-studio-secondary" id="libraryEmptyResetBtn">Show All Resources</button>
+    </div>
+  </div>
+</div>
+  </main>
+
+  <footer class="statusbar">
+    <span class="statusbar-left"></span>
+    <span class="statusbar-center">&copy; 2026 Math Code Center. Pure &amp; Applied Mathematics &middot; Lean 4 &middot; Scientific Computing.</span>
+    <span class="statusbar-right"></span>
+  </footer>
+</body>
+</html>

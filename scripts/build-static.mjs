@@ -353,10 +353,11 @@ function renderPageShell({ title, description, permalink, section, isHome = fals
   window.__APP_CONFIG__ = {
     mobileBreakpoint: 1279
   };
+  window.initFirebase = function() {};
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
-  <link rel="stylesheet" href="/css/main.css">
-  <script src="/js/main.js" defer></script>
+  <link rel="stylesheet" href="/css/main.css?v=20261005">
+  <script src="/js/main.js?v=20261005" defer></script>
 </head>
 <body>
   <script id="global-search-index" type="application/json">${searchIndexJson}</script>
@@ -435,10 +436,22 @@ function renderPageShell({ title, description, permalink, section, isHome = fals
 </html>`;
 }
 
+const BASE_PATH = (process.env.BASE_PATH || '').replace(/\/+$/, '');
+
+function withBasePath(urlPath) {
+  if (!BASE_PATH || !urlPath || !urlPath.startsWith('/')) return urlPath;
+  return `${BASE_PATH}${urlPath}`;
+}
+
+function applyBasePathToHtml(html) {
+  if (!BASE_PATH) return html;
+  return html.replace(/\b(href|src)="\/(?!\/)/g, `$1="${BASE_PATH}/`);
+}
+
 function writePage(relPath, html) {
   const fullPath = path.join(PUBLIC_DIR, relPath);
   fs.mkdirSync(path.dirname(fullPath), { recursive: true });
-  fs.writeFileSync(fullPath, html, 'utf8');
+  fs.writeFileSync(fullPath, applyBasePathToHtml(html), 'utf8');
 }
 
 // Load all content from content/blog, content/books, content/courses
@@ -446,18 +459,32 @@ function loadContent() {
   // 1. Blog articles
   const blogDir = path.join(CONTENT_DIR, 'blog');
   const articles = [];
+  const defaultArticleCovers = {
+    'welcome-to-mathcode': '/images/article_galois_groups.jpg',
+    'constructive-proofs-in-lean4': '/images/article_curry_howard.jpg',
+    'spectral-graph-theory-and-laplacians': '/images/article_spectral_graph.jpg',
+    'autodiff-and-dual-numbers': '/images/article_symplectic_geometry.jpg'
+  };
+  const fallbackArticleCovers = [
+    '/images/article_curry_howard.jpg',
+    '/images/article_galois_groups.jpg',
+    '/images/article_spectral_graph.jpg',
+    '/images/article_symplectic_geometry.jpg'
+  ];
   if (fs.existsSync(blogDir)) {
     const blogFiles = fs.readdirSync(blogDir).filter(f => f.endsWith('.md') && f !== '_index.md');
     for (const file of blogFiles) {
       const slug = file.replace(/\.md$/, '');
       const raw = fs.readFileSync(path.join(blogDir, file), 'utf8');
       const { params, body } = parseFrontmatterAndBody(raw, slug);
+      const cover = params.cover || defaultArticleCovers[slug] || fallbackArticleCovers[articles.length % fallbackArticleCovers.length];
       articles.push({
         slug,
         title: params.title || humanizeSlug(slug),
         date: params.date || '2026-10-04',
         domain: params.domain || 'Mathematics & Code',
         description: params.description || '',
+        cover,
         body,
         html: renderMarkdownWithLatex(body),
         readingTime: estimateReadingTime(body),
@@ -628,6 +655,42 @@ function loadContent() {
       courseLessons.sort((a, b) => (a.subtopic_weight - b.subtopic_weight) || (a.weight - b.weight));
       allLessons.push(...courseLessons);
 
+      const courseDefaultFormulas = {
+        'lean4-formal-proofs': '$$(P \\land Q \\to R) \\iff (P \\to Q \\to R)$$',
+        'pure-mathematics': '$$a^{\\varphi(n)} \\equiv 1 \\pmod n \\;\\cdot\\; A = U \\Sigma V^\\top$$',
+        'applied-scientific-computing': '$$x_{k+1} = x_k - [\\nabla^2 f(x_k)]^{-1}\\nabla f(x_k)$$'
+      };
+      const courseDefaultCode = {
+        'lean4-formal-proofs': 'theorem curry_equiv : (P ∧ Q → R) ↔ (P → Q → R)',
+        'pure-mathematics': 'def extended_gcd(a, b) · np.linalg.svd(A)',
+        'applied-scientific-computing': 'newton_raphson_step(x, H, g) · verlet_step(q, p)'
+      };
+
+      const extractedMathMatch = body.match(/\$\$[\s\S]+?\$\$/) ||
+        (courseLessons[0] && String(courseLessons[0].explanationHtml || '').match(/\$\$[\s\S]+?\$\$/));
+      const signatureFormula = params.formula ||
+        courseDefaultFormulas[courseSlug] ||
+        (extractedMathMatch ? extractedMathMatch[0] : '$$\\forall x \\in \\mathcal{X},\\; P(x) \\implies Q(x)$$');
+
+      const uniqueLangs = Array.from(new Set(courseLessons.map(l => (LANG_LABELS[l.language] || l.language).toUpperCase())));
+      const langSummary = uniqueLangs.length > 0 ? uniqueLangs.join(' · ') : 'LEAN 4 · PYTHON';
+      const signatureCode = params.code_preview || courseDefaultCode[courseSlug] || `${courseSlug.replace(/-/g, '_')} :: Verified Module`;
+
+      const defaultCourseCovers = {
+        'lean4-formal-proofs': '/images/course_lean4_proofs.jpg',
+        'pure-mathematics': '/images/course_pure_mathematics.jpg',
+        'applied-scientific-computing': '/images/course_applied_computing.jpg'
+      };
+      const fallbackCourseCovers = [
+        '/images/course_lean4_proofs.jpg',
+        '/images/course_pure_mathematics.jpg',
+        '/images/course_applied_computing.jpg'
+      ];
+      const courseCover = params.cover || defaultCourseCovers[courseSlug] || fallbackCourseCovers[courses.length % fallbackCourseCovers.length];
+      courseLessons.forEach(l => {
+        if (!l.cover) l.cover = courseCover;
+      });
+
       courses.push({
         slug: courseSlug,
         title: params.title || humanizeSlug(courseSlug),
@@ -635,6 +698,10 @@ function loadContent() {
         level: params.level || 'Undergraduate',
         weight: params.topic_weight || params.weight || 10,
         description: params.description || '',
+        cover: courseCover,
+        signatureFormula,
+        signatureCode,
+        langSummary,
         body,
         html: renderMarkdownWithLatex(body),
         lessons: courseLessons,
@@ -659,7 +726,7 @@ function buildGlobalSearchIndex({ articles, books, courses, lessons }) {
       title: c.title,
       subtitle: `${c.lessons.length} lessons · ${c.level}`,
       domain: c.domain,
-      url: c.permalink
+      url: withBasePath(c.permalink)
     });
   }
 
@@ -670,7 +737,7 @@ function buildGlobalSearchIndex({ articles, books, courses, lessons }) {
       title: l.title,
       subtitle: `${l.topic_title} (${humanizeSlug(l.subtopic)})`,
       domain: l.topic_domain || LANG_LABELS[l.language] || l.language.toUpperCase(),
-      url: l.permalink
+      url: withBasePath(l.permalink)
     });
   }
 
@@ -681,7 +748,7 @@ function buildGlobalSearchIndex({ articles, books, courses, lessons }) {
       title: b.title,
       subtitle: `${b.chapters.length} chapters · ${b.level}`,
       domain: b.domain,
-      url: b.permalink
+      url: withBasePath(b.permalink)
     });
     for (const ch of b.chapters) {
       index.push({
@@ -690,7 +757,7 @@ function buildGlobalSearchIndex({ articles, books, courses, lessons }) {
         title: ch.title,
         subtitle: b.title,
         domain: b.domain,
-        url: ch.permalink
+        url: withBasePath(ch.permalink)
       });
     }
   }
@@ -702,7 +769,7 @@ function buildGlobalSearchIndex({ articles, books, courses, lessons }) {
       title: a.title,
       subtitle: `${a.readingTime} min read · ${formatDate(a.date)}`,
       domain: a.domain,
-      url: a.permalink
+      url: withBasePath(a.permalink)
     });
   }
 
@@ -926,7 +993,12 @@ function renderCoursePlatformHtml({ activeId, title, description, language, diff
 }
 
 function buildAll() {
-  // 1. Sync CSS & JS assets into public/
+  // 1. Copy static/ files (including static/images/*) and sync CSS & JS assets into public/
+  const staticDir = path.join(ROOT, 'static');
+  if (fs.existsSync(staticDir)) {
+    fs.cpSync(staticDir, PUBLIC_DIR, { recursive: true });
+  }
+
   const cssContent = fs.readFileSync(path.join(ROOT, 'themes/mathcode/assets/css/main.css'), 'utf8');
   fs.mkdirSync(path.join(PUBLIC_DIR, 'css'), { recursive: true });
   fs.writeFileSync(path.join(PUBLIC_DIR, 'css/main.css'), cssContent, 'utf8');
@@ -1077,22 +1149,25 @@ function buildAll() {
       </div>
 
       <div class="catalog-grid-3">
-        ${courses.map(c => `
-        <article class="studio-card">
-          <div class="card-meta-line">
-            <span class="meta-type-course">COURSE</span>
-            <span class="meta-dot">&middot;</span>
-            <span>${escapeHtml(c.domain)}</span>
-            <span class="meta-dot">&middot;</span>
-            <span>${escapeHtml(c.level)}</span>
-          </div>
-          <h3 class="card-title"><a href="${c.permalink}">${escapeHtml(c.title)}</a></h3>
-          <p class="card-excerpt">${escapeHtml(c.description)}</p>
-          <div class="card-chapter-links">
-            ${c.lessons.map(l => `<a href="${l.permalink}" class="chapter-mini-link"><i class="bi bi-terminal"></i> ${escapeHtml(l.title)}</a>`).join('')}
-          </div>
-          <div class="card-footer-row">
-            <a href="${c.permalink}" class="card-action-link">Enter Course Studio <i class="bi bi-arrow-up-right"></i></a>
+        ${courses.map((c, cIdx) => `
+        <article class="studio-book-card">
+          <a href="${c.permalink}" class="book-cover-link">
+            <img src="${c.cover}" alt="${escapeHtml(c.title)}" class="book-cover-img" loading="lazy" referrerpolicy="no-referrer">
+          </a>
+          <div class="book-card-body">
+            <div class="card-meta-line">
+              <span class="meta-type-course">COURSE 0${cIdx + 1}</span>
+              <span class="meta-dot">&middot;</span>
+              <span>${escapeHtml(c.domain)}</span>
+              <span class="meta-dot">&middot;</span>
+              <span>${c.lessons.length} Lessons</span>
+            </div>
+            <h3 class="card-title"><a href="${c.permalink}">${escapeHtml(c.title)}</a></h3>
+            <p class="card-excerpt">${escapeHtml(c.description)}</p>
+            <div class="card-footer-row course-card-footer">
+              ${c.lessons[0] ? `<a href="${c.lessons[0].permalink}" class="btn-studio-primary course-card-start-btn"><i class="bi bi-play-fill"></i> Start Course</a>` : ''}
+              <a href="${c.permalink}" class="card-action-link">Syllabus <i class="bi bi-arrow-up-right"></i></a>
+            </div>
           </div>
         </article>`).join('')}
       </div>
@@ -1111,7 +1186,7 @@ function buildAll() {
         ${books.map(b => `
         <article class="studio-book-card">
           <a href="${b.permalink}" class="book-cover-link">
-            <img src="${b.cover}" alt="${escapeHtml(b.title)}" class="book-cover-img">
+            <img src="${b.cover}" alt="${escapeHtml(b.title)}" class="book-cover-img" loading="lazy" referrerpolicy="no-referrer">
           </a>
           <div class="book-card-body">
             <div class="card-meta-line">
@@ -1140,19 +1215,26 @@ function buildAll() {
         <a href="/blog/" class="section-link">View All Articles <i class="bi bi-arrow-right"></i></a>
       </div>
 
-      <div class="articles-ledger">
+      <div class="catalog-grid-3">
         ${articles.slice(0, 4).map(a => `
-        <article class="ledger-row">
-          <div class="ledger-meta">
-            <time datetime="${escapeHtml(a.date)}">${formatDate(a.date)}</time>
-            <span class="meta-dot">&middot;</span>
-            <span>${escapeHtml(a.domain)}</span>
-            <span class="meta-dot">&middot;</span>
-            <span>${a.readingTime} min read</span>
+        <article class="studio-book-card">
+          <a href="${a.permalink}" class="book-cover-link">
+            <img src="${a.cover}" alt="${escapeHtml(a.title)}" class="book-cover-img" loading="lazy" referrerpolicy="no-referrer">
+          </a>
+          <div class="book-card-body">
+            <div class="card-meta-line">
+              <span class="meta-type-article">ARTICLE</span>
+              <span class="meta-dot">&middot;</span>
+              <span>${escapeHtml(a.domain)}</span>
+              <span class="meta-dot">&middot;</span>
+              <span>${a.readingTime} min read</span>
+            </div>
+            <h3 class="card-title"><a href="${a.permalink}">${escapeHtml(a.title)}</a></h3>
+            <p class="card-excerpt">${escapeHtml(a.description)}</p>
+            <div class="card-footer-row">
+              <a href="${a.permalink}" class="card-action-link">Read Essay <i class="bi bi-arrow-right"></i></a>
+            </div>
           </div>
-          <h3 class="ledger-title"><a href="${a.permalink}">${escapeHtml(a.title)}</a></h3>
-          <p class="ledger-desc">${escapeHtml(a.description)}</p>
-          <a href="${a.permalink}" class="ledger-read-link">Read Essay <i class="bi bi-arrow-right"></i></a>
         </article>`).join('')}
       </div>
     </section>
@@ -1212,73 +1294,88 @@ function buildAll() {
     </header>
 
     <div class="catalog-grid-3" id="libraryCatalogGrid">
-      ${courses.map(c => `
-      <article class="studio-card library-item-card" data-type="course" data-domain="${escapeHtml(c.domain)}" data-search="${escapeHtml((c.title + ' ' + c.description + ' ' + c.domain + ' course').toLowerCase())}">
-        <div class="card-meta-line">
-          <span class="meta-type-course">COURSE</span>
-          <span class="meta-dot">&middot;</span>
-          <span>${escapeHtml(c.domain)}</span>
-          <span class="meta-dot">&middot;</span>
-          <span>${c.lessons.length} Lessons</span>
-        </div>
-        <h2 class="card-title"><a href="${c.permalink}">${escapeHtml(c.title)}</a></h2>
-        <p class="card-excerpt">${escapeHtml(c.description)}</p>
-        <div class="card-chapter-links">
-          ${c.lessons.map(l => `<a href="${l.permalink}" class="chapter-mini-link"><i class="bi bi-terminal"></i> ${escapeHtml(l.title)}</a>`).join('')}
-        </div>
-        <div class="card-footer-row">
-          <a href="${c.permalink}" class="card-action-link">Open Course <i class="bi bi-arrow-up-right"></i></a>
+      ${courses.map((c, cIdx) => `
+      <article class="studio-book-card library-item-card" data-type="course" data-domain="${escapeHtml(c.domain)}" data-search="${escapeHtml((c.title + ' ' + c.description + ' ' + c.domain + ' course').toLowerCase())}">
+        <a href="${c.permalink}" class="book-cover-link">
+          <img src="${c.cover}" alt="${escapeHtml(c.title)}" class="book-cover-img" loading="lazy" referrerpolicy="no-referrer">
+        </a>
+        <div class="book-card-body">
+          <div class="card-meta-line">
+            <span class="meta-type-course">COURSE 0${cIdx + 1}</span>
+            <span class="meta-dot">&middot;</span>
+            <span>${escapeHtml(c.domain)}</span>
+            <span class="meta-dot">&middot;</span>
+            <span>${c.lessons.length} Lessons</span>
+          </div>
+          <h2 class="card-title"><a href="${c.permalink}">${escapeHtml(c.title)}</a></h2>
+          <p class="card-excerpt">${escapeHtml(c.description)}</p>
+          <div class="card-footer-row course-card-footer">
+            ${c.lessons[0] ? `<a href="${c.lessons[0].permalink}" class="btn-studio-primary course-card-start-btn"><i class="bi bi-play-fill"></i> Start Course</a>` : ''}
+            <a href="${c.permalink}" class="card-action-link">Syllabus <i class="bi bi-arrow-up-right"></i></a>
+          </div>
         </div>
       </article>`).join('')}
 
       ${books.map(b => `
-      <article class="studio-card library-item-card" data-type="book" data-domain="${escapeHtml(b.domain)}" data-search="${escapeHtml((b.title + ' ' + b.description + ' ' + b.domain + ' book monograph').toLowerCase())}">
-        <div class="card-meta-line">
-          <span class="meta-type-book">BOOK</span>
-          <span class="meta-dot">&middot;</span>
-          <span>${escapeHtml(b.domain)}</span>
-          <span class="meta-dot">&middot;</span>
-          <span>${b.chapters.length} Chapters</span>
-        </div>
-        <h2 class="card-title"><a href="${b.permalink}">${escapeHtml(b.title)}</a></h2>
-        <p class="card-excerpt">${escapeHtml(b.description)}</p>
-        <div class="card-chapter-links">
-          ${b.chapters.map(ch => `<a href="${ch.permalink}" class="chapter-mini-link"><i class="bi bi-journal-text"></i> ${escapeHtml(ch.title)}</a>`).join('')}
-        </div>
-        <div class="card-footer-row">
-          <a href="${b.permalink}" class="card-action-link">Read Monograph <i class="bi bi-arrow-right"></i></a>
+      <article class="studio-book-card library-item-card" data-type="book" data-domain="${escapeHtml(b.domain)}" data-search="${escapeHtml((b.title + ' ' + b.description + ' ' + b.domain + ' book monograph').toLowerCase())}">
+        <a href="${b.permalink}" class="book-cover-link">
+          <img src="${b.cover}" alt="${escapeHtml(b.title)}" class="book-cover-img" loading="lazy" referrerpolicy="no-referrer">
+        </a>
+        <div class="book-card-body">
+          <div class="card-meta-line">
+            <span class="meta-type-book">BOOK</span>
+            <span class="meta-dot">&middot;</span>
+            <span>${escapeHtml(b.domain)}</span>
+            <span class="meta-dot">&middot;</span>
+            <span>${b.chapters.length} Chapters</span>
+          </div>
+          <h2 class="card-title"><a href="${b.permalink}">${escapeHtml(b.title)}</a></h2>
+          <p class="card-excerpt">${escapeHtml(b.description)}</p>
+          <div class="card-footer-row">
+            <a href="${b.permalink}" class="card-action-link">Read Monograph <i class="bi bi-arrow-right"></i></a>
+          </div>
         </div>
       </article>`).join('')}
 
       ${lessons.map(l => `
-      <article class="studio-card library-item-card" data-type="lesson" data-domain="${escapeHtml(l.topic_domain)}" data-search="${escapeHtml((l.title + ' ' + l.description + ' ' + l.language + ' ' + l.topic_title + ' lesson').toLowerCase())}">
-        <div class="card-meta-line">
-          <span class="meta-type-lesson">LESSON</span>
-          <span class="meta-dot">&middot;</span>
-          <span>${escapeHtml(l.topic_domain)}</span>
-          <span class="meta-dot">&middot;</span>
-          <span>${escapeHtml((LANG_LABELS[l.language] || l.language).toUpperCase())}</span>
-        </div>
-        <h2 class="card-title"><a href="${l.permalink}">${escapeHtml(l.title)}</a></h2>
-        <p class="card-excerpt">${escapeHtml(l.description || `Interactive lesson in ${l.topic_title}.`)}</p>
-        <div class="card-footer-row">
-          <a href="${l.permalink}" class="card-action-link">Launch Lesson <i class="bi bi-arrow-right"></i></a>
+      <article class="studio-book-card library-item-card" data-type="lesson" data-domain="${escapeHtml(l.topic_domain)}" data-search="${escapeHtml((l.title + ' ' + l.description + ' ' + l.language + ' ' + l.topic_title + ' lesson').toLowerCase())}">
+        <a href="${l.permalink}" class="book-cover-link">
+          <img src="${l.cover}" alt="${escapeHtml(l.title)}" class="book-cover-img" loading="lazy" referrerpolicy="no-referrer">
+        </a>
+        <div class="book-card-body">
+          <div class="card-meta-line">
+            <span class="meta-type-lesson">LESSON</span>
+            <span class="meta-dot">&middot;</span>
+            <span>${escapeHtml(l.topic_domain)}</span>
+            <span class="meta-dot">&middot;</span>
+            <span>${escapeHtml((LANG_LABELS[l.language] || l.language).toUpperCase())}</span>
+          </div>
+          <h2 class="card-title"><a href="${l.permalink}">${escapeHtml(l.title)}</a></h2>
+          <p class="card-excerpt">${escapeHtml(l.description || `Interactive lesson in ${l.topic_title}.`)}</p>
+          <div class="card-footer-row">
+            <a href="${l.permalink}" class="card-action-link">Launch Lesson <i class="bi bi-arrow-right"></i></a>
+          </div>
         </div>
       </article>`).join('')}
 
       ${articles.map(a => `
-      <article class="studio-card library-item-card" data-type="article" data-domain="${escapeHtml(a.domain)}" data-search="${escapeHtml((a.title + ' ' + a.description + ' ' + a.domain + ' article blog').toLowerCase())}">
-        <div class="card-meta-line">
-          <span class="meta-type-article">ARTICLE</span>
-          <span class="meta-dot">&middot;</span>
-          <span>${escapeHtml(a.domain)}</span>
-          <span class="meta-dot">&middot;</span>
-          <span>${a.readingTime} min read</span>
-        </div>
-        <h2 class="card-title"><a href="${a.permalink}">${escapeHtml(a.title)}</a></h2>
-        <p class="card-excerpt">${escapeHtml(a.description)}</p>
-        <div class="card-footer-row">
-          <a href="${a.permalink}" class="card-action-link">Read Article <i class="bi bi-arrow-right"></i></a>
+      <article class="studio-book-card library-item-card" data-type="article" data-domain="${escapeHtml(a.domain)}" data-search="${escapeHtml((a.title + ' ' + a.description + ' ' + a.domain + ' article blog').toLowerCase())}">
+        <a href="${a.permalink}" class="book-cover-link">
+          <img src="${a.cover}" alt="${escapeHtml(a.title)}" class="book-cover-img" loading="lazy" referrerpolicy="no-referrer">
+        </a>
+        <div class="book-card-body">
+          <div class="card-meta-line">
+            <span class="meta-type-article">ARTICLE</span>
+            <span class="meta-dot">&middot;</span>
+            <span>${escapeHtml(a.domain)}</span>
+            <span class="meta-dot">&middot;</span>
+            <span>${a.readingTime} min read</span>
+          </div>
+          <h2 class="card-title"><a href="${a.permalink}">${escapeHtml(a.title)}</a></h2>
+          <p class="card-excerpt">${escapeHtml(a.description)}</p>
+          <div class="card-footer-row">
+            <a href="${a.permalink}" class="card-action-link">Read Article <i class="bi bi-arrow-right"></i></a>
+          </div>
         </div>
       </article>`).join('')}
     </div>
@@ -1555,19 +1652,28 @@ function buildAll() {
       </div>
     </header>
 
-    <div class="articles-ledger" id="blogArticlesList">
+    <div class="catalog-grid-3" id="blogArticlesList">
       ${articles.map(a => `
-      <article class="ledger-row blog-item-row" data-domain="${escapeHtml(a.domain)}" data-search="${escapeHtml((a.title + ' ' + a.description + ' ' + a.domain).toLowerCase())}">
-        <div class="ledger-meta">
-          <time datetime="${escapeHtml(a.date)}">${formatDate(a.date)}</time>
-          <span class="meta-dot">&middot;</span>
-          <span>${escapeHtml(a.domain)}</span>
-          <span class="meta-dot">&middot;</span>
-          <span>${a.readingTime} min read</span>
+      <article class="studio-book-card blog-item-row" data-domain="${escapeHtml(a.domain)}" data-search="${escapeHtml((a.title + ' ' + a.description + ' ' + a.domain).toLowerCase())}">
+        <a href="${a.permalink}" class="book-cover-link">
+          <img src="${a.cover}" alt="${escapeHtml(a.title)}" class="book-cover-img" loading="lazy" referrerpolicy="no-referrer">
+        </a>
+        <div class="book-card-body">
+          <div class="card-meta-line">
+            <span class="meta-type-article">ARTICLE</span>
+            <span class="meta-dot">&middot;</span>
+            <time datetime="${escapeHtml(a.date)}">${formatDate(a.date)}</time>
+            <span class="meta-dot">&middot;</span>
+            <span>${escapeHtml(a.domain)}</span>
+            <span class="meta-dot">&middot;</span>
+            <span>${a.readingTime} min read</span>
+          </div>
+          <h2 class="card-title"><a href="${a.permalink}">${escapeHtml(a.title)}</a></h2>
+          <p class="card-excerpt">${escapeHtml(a.description)}</p>
+          <div class="card-footer-row">
+            <a href="${a.permalink}" class="card-action-link">Read Full Article <i class="bi bi-arrow-right"></i></a>
+          </div>
         </div>
-        <h2 class="ledger-title"><a href="${a.permalink}">${escapeHtml(a.title)}</a></h2>
-        <p class="ledger-desc">${escapeHtml(a.description)}</p>
-        <a href="${a.permalink}" class="ledger-read-link">Read Full Article <i class="bi bi-arrow-right"></i></a>
       </article>`).join('')}
     </div>
   </div>
@@ -1665,52 +1771,52 @@ function buildAll() {
       <div class="library-controls-bar" id="coursesFilterBar">
         <div class="library-search-wrap">
           <i class="bi bi-search library-search-icon"></i>
-          <input type="search" id="coursesSearchInput" class="library-search-input" placeholder="Search courses, modules, or lessons (e.g. Lean 4, Spectral, Symplectic)..." autocomplete="off">
+          <input type="search" id="coursesSearchInput" class="library-search-input" placeholder="Search courses, modules, theorems, or languages (e.g. Lean 4, Spectral, Symplectic, C)..." autocomplete="off">
         </div>
         <div class="filter-segment-group" role="group" aria-label="Filter courses by domain">
-          <button type="button" class="filter-seg-btn active" data-course-domain="all">All Domains (${courses.length})</button>
+          <button type="button" class="filter-seg-btn active" data-course-domain="all">All Tracks (${courses.length})</button>
           <button type="button" class="filter-seg-btn" data-course-domain="Formal Proofs & Lean 4">Lean 4 &amp; Proofs</button>
           <button type="button" class="filter-seg-btn" data-course-domain="Pure Math">Pure Math</button>
           <button type="button" class="filter-seg-btn" data-course-domain="Applied Math">Applied Math</button>
         </div>
       </div>
+
+      <div class="library-status-bar">
+        <span id="coursesResultCount">Showing all ${courses.length} course tracks (${lessons.length} interactive lessons)</span>
+        <button type="button" id="coursesResetBtn" class="library-reset-link d-none">Reset filters</button>
+      </div>
     </header>
 
-    <div class="books-showcase-list" id="coursesCatalogList">
-      ${courses.map(c => `
-      <article class="book-showcase-card course-catalog-card" data-domain="${escapeHtml(c.domain)}" data-search="${escapeHtml((c.title + ' ' + c.description + ' ' + c.lessons.map(l => l.title).join(' ')).toLowerCase())}">
-        <div class="book-showcase-body" style="grid-column: 1 / -1;">
+    <div class="catalog-grid-3" id="coursesCatalogList">
+      ${courses.map((c, cIdx) => `
+      <article class="studio-book-card course-catalog-card" data-domain="${escapeHtml(c.domain)}" data-search="${escapeHtml((c.title + ' ' + c.description + ' ' + c.domain + ' ' + c.langSummary + ' ' + c.lessons.map(l => l.title).join(' ')).toLowerCase())}">
+        <a href="${c.permalink}" class="book-cover-link">
+          <img src="${c.cover}" alt="${escapeHtml(c.title)}" class="book-cover-img" loading="lazy" referrerpolicy="no-referrer">
+        </a>
+        <div class="book-card-body">
           <div class="card-meta-line">
-            <span class="meta-type-course">COURSE TRACK</span>
+            <span class="meta-type-course">COURSE 0${cIdx + 1}</span>
             <span class="meta-dot">&middot;</span>
             <span>${escapeHtml(c.domain)}</span>
             <span class="meta-dot">&middot;</span>
-            <span>${escapeHtml(c.level)}</span>
-            <span class="meta-dot">&middot;</span>
             <span>${c.lessons.length} Lessons</span>
           </div>
-          <h2 class="book-showcase-title"><a href="${c.permalink}">${escapeHtml(c.title)}</a></h2>
-          <p class="book-showcase-desc">${escapeHtml(c.description)}</p>
 
-          <div class="book-toc-preview">
-            <div class="toc-preview-heading">Curriculum Lessons</div>
-            <div class="toc-preview-grid">
-              ${c.lessons.map((l, idx) => `
-              <a href="${l.permalink}" class="toc-chapter-row" data-lesson-id="${escapeHtml(l.id)}">
-                <span class="toc-ch-num">${String(idx + 1).padStart(2, '0')}</span>
-                <span class="toc-ch-title">${escapeHtml(l.title)}</span>
-                <span class="toc-ch-meta">${escapeHtml((LANG_LABELS[l.language] || l.language).toUpperCase())}</span>
-                <i class="bi bi-arrow-right toc-ch-arrow"></i>
-              </a>`).join('')}
-            </div>
-          </div>
+          <h2 class="card-title"><a href="${c.permalink}">${escapeHtml(c.title)}</a></h2>
+          <p class="card-excerpt">${escapeHtml(c.description)}</p>
 
-          <div class="book-showcase-actions">
-            ${c.lessons[0] ? `<a href="${c.lessons[0].permalink}" class="btn-studio-primary"><i class="bi bi-play-fill"></i> Start Lesson 1: ${escapeHtml(c.lessons[0].title)}</a>` : ''}
-            <a href="${c.permalink}" class="btn-studio-secondary">Course Syllabus &amp; Overview</a>
+          <div class="card-footer-row course-card-footer">
+            ${c.lessons[0] ? `<a href="${c.lessons[0].permalink}" class="btn-studio-primary course-card-start-btn"><i class="bi bi-play-fill"></i> Start Course</a>` : ''}
+            <a href="${c.permalink}" class="card-action-link">Syllabus <i class="bi bi-arrow-up-right"></i></a>
           </div>
         </div>
       </article>`).join('')}
+    </div>
+
+    <div id="coursesEmptyState" class="library-empty-state d-none">
+      <h3>No matching courses found</h3>
+      <p>Try clearing your search query or switching to "All Tracks".</p>
+      <button type="button" class="btn-studio-secondary" id="coursesEmptyResetBtn">Show All Courses</button>
     </div>
   </div>
 </div>`;

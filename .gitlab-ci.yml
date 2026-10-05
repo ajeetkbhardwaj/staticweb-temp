@@ -1,4 +1,4 @@
-image: node:20-alpine
+image: node:24-alpine
 
 workflow:
   rules:
@@ -7,7 +7,7 @@ workflow:
 pages:
   stage: deploy
   script:
-    - npm install
+    - npm install --no-audit --no-fund
     - npm run build
   artifacts:
     paths:

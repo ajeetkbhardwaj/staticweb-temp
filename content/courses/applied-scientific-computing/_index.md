@@ -5,6 +5,7 @@ domain = 'Applied Mathematics'
 level = 'Advanced'
 date = '2026-10-04'
 topic_weight = 3
+cover = '/images/course_applied_computing.jpg'
 +++
 
 ## Course Overview

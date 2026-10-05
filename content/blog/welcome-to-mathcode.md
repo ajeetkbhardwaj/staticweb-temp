@@ -4,6 +4,7 @@ date = '2026-10-04'
 domain = 'Pure & Applied Mathematics'
 author = 'Math Code Center Research'
 description = 'Bridging pure and applied mathematics with formal verification in Lean 4 and high-performance scientific computing.'
+cover = '/images/article_galois_groups.jpg'
 +++
 
 Mathematics and computer science share a deep foundational identity. Under the **Curry–Howard correspondence**, a mathematical proposition $P$ is a type, and a proof of $P$ is a well-typed program inhabiting that type. Meanwhile, in applied mathematics, differential equations, spectral theory, and convex optimization come alive when expressed as rigorous numerical algorithms.

@@ -1,0 +1,53 @@
+{{ define "main" }}
+{{ $articles := where site.RegularPages "Section" "blog" }}
+<div class="studio-scroll-page">
+  <div class="studio-container">
+    <header class="page-studio-header">
+      <div class="studio-eyebrow">EXPOSITIONS, THEOREMS &amp; FORMALIZATIONS</div>
+      <h1 class="page-studio-title">Research Essays &amp; Mathematical Blog</h1>
+      <p class="page-studio-subtitle">
+        Long-form technical articles on pure and applied mathematics, constructive proofs in Lean 4, spectral methods, and scientific algorithms.
+      </p>
+
+      <div class="library-controls-bar" id="blogFilterBar">
+        <div class="library-search-wrap">
+          <i class="bi bi-search library-search-icon"></i>
+          <input type="search" id="blogSearchInput" class="library-search-input" placeholder="Search essays by theorem, topic, or code language..." autocomplete="off">
+        </div>
+        <div class="filter-segment-group" role="group" aria-label="Filter blog by domain">
+          <button type="button" class="filter-seg-btn active" data-blog-domain="all">All Essays ({{ len $articles }})</button>
+          <button type="button" class="filter-seg-btn" data-blog-domain="Formal Proofs & Lean 4">Lean 4 &amp; Proofs</button>
+          <button type="button" class="filter-seg-btn" data-blog-domain="Pure Math">Pure Math</button>
+          <button type="button" class="filter-seg-btn" data-blog-domain="Applied Math">Applied Math</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="catalog-grid-3" id="blogArticlesList">
+      {{ range $articles }}
+      <article class="studio-book-card blog-item-row" data-domain="{{ .Params.domain | default "Mathematics & Code" }}" data-search="{{ lower .Title }} {{ lower (.Params.description | default .Summary) }} {{ lower (.Params.domain | default "") }}">
+        <a href="{{ .RelPermalink }}" class="book-cover-link">
+          <img src="{{ .Params.cover | default "/images/article_curry_howard.jpg" }}" alt="{{ .Title }}" class="book-cover-img" loading="lazy" referrerpolicy="no-referrer">
+        </a>
+        <div class="book-card-body">
+          <div class="card-meta-line">
+            <span class="meta-type-article">ARTICLE</span>
+            <span class="meta-dot">&middot;</span>
+            <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2, 2006" }}</time>
+            <span class="meta-dot">&middot;</span>
+            <span>{{ .Params.domain | default "Mathematics & Code" }}</span>
+            <span class="meta-dot">&middot;</span>
+            <span>{{ .ReadingTime }} min read</span>
+          </div>
+          <h2 class="card-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+          <p class="card-excerpt">{{ .Params.description | default .Summary }}</p>
+          <div class="card-footer-row">
+            <a href="{{ .RelPermalink }}" class="card-action-link">Read Full Article <i class="bi bi-arrow-right"></i></a>
+          </div>
+        </div>
+      </article>
+      {{ end }}
+    </div>
+  </div>
+</div>
+{{ end }}

@@ -2,6 +2,7 @@ import express from 'express';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import './scripts/build-static.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,10 +17,21 @@ app.get('/livereload.js', (_req, res) => {
   res.type('application/javascript').send('// Static server\n');
 });
 
-app.use(express.static(publicDir, { extensions: ['html'] }));
+// Prevent stale browser caching of static assets in preview
+app.use(
+  express.static(publicDir, {
+    extensions: ['html'],
+    etag: false,
+    lastModified: false,
+    setHeaders: (res) => {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+    }
+  })
+);
 
 // Fallback for trailing-slash or directory routes in public/
 app.use((req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
   const cleanPath = req.path.replace(/^\/+/, '');
   const indexCandidate = path.join(publicDir, cleanPath, 'index.html');
   if (fs.existsSync(indexCandidate)) {

@@ -4,6 +4,7 @@ date = '2026-10-03'
 domain = 'Lean 4 & Proofs'
 author = 'Math Code Center Research'
 description = 'How dependent type theory turns logical quantifiers into function types and dependent pairs in Lean 4.'
+cover = '/images/article_curry_howard.jpg'
 +++
 
 When transitioning from traditional pen-and-paper mathematics to an interactive theorem prover like **Lean 4**, the most illuminating realization is that logical connectives and type constructors are identical structures.

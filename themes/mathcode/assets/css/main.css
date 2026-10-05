@@ -1937,6 +1937,187 @@ body {
 }
 
 /* ==========================================================================
+   9B. 3-COLUMN COURSE CATALOG CARDS WITH MATH & CODE HEADER ART (/courses/)
+   ========================================================================== */
+
+.course-catalog-card {
+  padding-top: 1.25rem;
+}
+
+.course-visual-banner {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: -1.25rem -1.5rem 1.15rem -1.5rem;
+  padding: 1rem 1.2rem 0.85rem;
+  background-color: #080C14;
+  background-image:
+    radial-gradient(circle at 85% 20%, rgba(59, 130, 246, 0.16), transparent 55%),
+    linear-gradient(to right, rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+  background-size: 100% 100%, 20px 20px, 20px 20px;
+  border-bottom: 1px solid var(--studio-border);
+  border-radius: 8px 8px 0 0;
+  text-decoration: none;
+  color: #F1F5F9;
+  min-height: 158px;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.course-visual-banner.course-theme-2 {
+  background-image:
+    radial-gradient(circle at 85% 20%, rgba(16, 185, 129, 0.15), transparent 55%),
+    linear-gradient(to right, rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+}
+
+.course-visual-banner.course-theme-3 {
+  background-image:
+    radial-gradient(circle at 85% 20%, rgba(245, 158, 11, 0.15), transparent 55%),
+    linear-gradient(to right, rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+}
+
+.course-visual-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.course-visual-lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #60A5FA;
+  font-weight: 600;
+}
+
+.course-visual-level {
+  padding: 0.12rem 0.45rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #CBD5E1;
+  font-size: 0.65rem;
+}
+
+.course-visual-formula {
+  margin: 0.65rem 0;
+  padding: 0.35rem 0.25rem;
+  text-align: center;
+  font-size: 0.92rem;
+  color: #F8FAFC;
+  overflow-x: auto;
+}
+
+.course-visual-formula .katex-display {
+  margin: 0 !important;
+}
+
+.course-visual-code {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.32rem 0.6rem;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 5px;
+  font-family: var(--font-mono);
+  font-size: 0.71rem;
+  color: #CBD5E1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.course-visual-code code {
+  color: #E2E8F0;
+  font-family: var(--font-mono);
+  font-size: 0.71rem;
+}
+
+.course-card-curriculum-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--studio-text-muted);
+  margin-bottom: 0.2rem;
+}
+
+.course-lesson-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 0.65rem;
+  background-color: var(--studio-bg);
+  border: 1px solid var(--studio-border);
+  border-radius: 6px;
+}
+
+.course-pill-num {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+  flex-shrink: 0;
+}
+
+.course-pill-title {
+  flex: 1;
+  font-size: 0.81rem;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.course-pill-lang {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  padding: 0.08rem 0.38rem;
+  border-radius: 4px;
+  background: var(--studio-surface-elevated);
+  color: var(--studio-text-muted);
+  flex-shrink: 0;
+}
+
+.course-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.course-card-start-btn {
+  padding: 0.42rem 0.85rem;
+  font-size: 0.8rem;
+}
+
+.blog-hero-cover-wrap {
+  margin-top: 1.5rem;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--studio-border);
+  background-color: var(--studio-surface);
+  max-height: 360px;
+}
+
+.blog-hero-cover-img {
+  width: 100%;
+  height: 100%;
+  max-height: 360px;
+  object-fit: cover;
+  display: block;
+}
+
+/* ==========================================================================
    10. RESPONSIVE BREAKPOINTS
    ========================================================================== */
 

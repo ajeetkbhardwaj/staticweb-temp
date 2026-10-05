@@ -4,6 +4,7 @@ date = '2026-10-02'
 domain = 'Applied Mathematics'
 author = 'Math Code Center Research'
 description = 'Connecting the algebraic connectivity eigenvalue of the graph Laplacian to optimal network partitioning and spectral clustering.'
+cover = '/images/article_spectral_graph.jpg'
 +++
 
 Given an undirected weighted graph $G = (V, E, w)$ with $|V| = n$, its **combinatorial graph Laplacian** is the symmetric positive semidefinite matrix $L \in \mathbb{R}^{n \times n}$ defined by:

@@ -6,6 +6,7 @@
 (function() {
   'use strict';
 
+  window.initFirebase = function() {};
   var THEME_KEY = 'mathcode-theme';
 
   function escapeHtml(str) {
@@ -632,19 +633,33 @@
     if (!list) return;
     var searchInput = document.getElementById('coursesSearchInput');
     var domainBtns = document.querySelectorAll('[data-course-domain]');
+    var countEl = document.getElementById('coursesResultCount');
+    var resetBtn = document.getElementById('coursesResetBtn');
+    var emptyState = document.getElementById('coursesEmptyState');
+    var emptyResetBtn = document.getElementById('coursesEmptyResetBtn');
     var cards = Array.prototype.slice.call(list.querySelectorAll('.course-catalog-card'));
     var activeDomain = 'all';
     var query = '';
 
     function applyFilter() {
       var q = query.trim().toLowerCase();
+      var visibleCount = 0;
       cards.forEach(function(card) {
         var dom = card.getAttribute('data-domain') || '';
         var text = (card.getAttribute('data-search') || '') + ' ' + (card.textContent || '').toLowerCase();
         var matchDomain = matchesDomainFilter(dom, activeDomain);
         var matchQ = !q || text.indexOf(q) !== -1;
-        card.classList.toggle('d-none', !(matchDomain && matchQ));
+        var show = matchDomain && matchQ;
+        card.classList.toggle('d-none', !show);
+        if (show) visibleCount++;
       });
+
+      if (countEl) {
+        countEl.textContent = 'Showing ' + visibleCount + ' of ' + cards.length + ' course tracks';
+      }
+      var isFiltered = activeDomain !== 'all' || q.length > 0;
+      if (resetBtn) resetBtn.classList.toggle('d-none', !isFiltered);
+      if (emptyState) emptyState.classList.toggle('d-none', visibleCount > 0);
     }
 
     domainBtns.forEach(function(btn) {
@@ -662,6 +677,19 @@
         applyFilter();
       });
     }
+
+    function resetCoursesFilter() {
+      activeDomain = 'all';
+      query = '';
+      if (searchInput) searchInput.value = '';
+      domainBtns.forEach(function(b) {
+        b.classList.toggle('active', b.getAttribute('data-course-domain') === 'all');
+      });
+      applyFilter();
+    }
+
+    if (resetBtn) resetBtn.addEventListener('click', resetCoursesFilter);
+    if (emptyResetBtn) emptyResetBtn.addEventListener('click', resetCoursesFilter);
   }
 
   function initBlogFilters() {
